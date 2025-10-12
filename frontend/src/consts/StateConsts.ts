@@ -1,0 +1,8 @@
+export const SET_UPDATE_PERSON: string = "SET_UPDATE_PERSON";
+export const SET_UPDATE_LOCATION: string = "SET_UPDATE_LOCATION";
+export const SET_UPDATE_COORDINATES: string = "SET_UPDATE_COORDINATES";
+export const SET_CREATE_PERSON: string = "SET_CREATE_PERSON";
+export const SET_CREATE_LOCATION: string = "SET_CREATE_LOCATION";
+export const SET_CREATE_COORDINATES: string = "SET_CREATE_COORDINATES";
+export const COPY_STATE: string = "COPY_STATE";
+export const CLEAR_ALL = "CLEAR_ALL";

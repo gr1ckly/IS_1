@@ -1,0 +1,117 @@
+.container {
+    background-color: #fafafa;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    width: fit-content;
+    margin: 16px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.createButton,
+.filterButton,
+.applyButton,
+.pageButton,
+.updateButton,
+.deleteButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+}
+
+.createButton:hover,
+.filterButton:hover,
+.applyButton:hover,
+.pageButton:hover,
+.updateButton:hover,
+.deleteButton:hover {
+    background-color: #0056b3;
+}
+
+.filters {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    background-color: #f2f4f8;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+}
+
+.select {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    border-bottom: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.table th {
+    background-color: #f2f4f8;
+    font-weight: 600;
+}
+
+.deleteButton {
+    background-color: #dc3545;
+}
+
+.deleteButton:hover {
+    background-color: #b02a37;
+}
+
+.updateButton {
+    background-color: #28a745;
+}
+
+.updateButton:hover {
+    background-color: #1e7e34;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.pageLabel {
+    font-size: 14px;
+    color: #333;
+}

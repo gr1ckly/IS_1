@@ -1,0 +1,79 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f9f9fb;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    width: 360px;
+}
+
+.closeButton {
+    align-self: flex-end;
+    background: #d9534f;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.closeButton:hover {
+    background: #c9302c;
+}
+
+.idLabel {
+    font-weight: bold;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.input,
+.select {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input:focus,
+.select:focus {
+    border-color: #007bff;
+}
+
+.actionButton {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 6px;
+    transition: background 0.2s;
+}
+
+.actionButton:hover {
+    background: #0056b3;
+}
+
+.message {
+    color: #d9534f;
+    font-size: 13px;
+    margin-top: 6px;
+}

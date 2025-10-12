@@ -1,0 +1,89 @@
+import {ChangeEvent, useState} from "react";
+import Color from "../../dtos/ColorEnum";
+import PersonService from "../../services/PersonService";
+import FilterOption from "../../dtos/FilterOption";
+import OperationType from "../../dtos/OperationType";
+import LocationService from "../../services/LocationService";
+import LocationDTO from "../../dtos/LocationDTO";
+import styles from "../../styles/HairColor.module.css";
+
+export default function HairColor() {
+    var [selectedColor, setSelectedColor] = useState<Color | undefined>(undefined);
+    var [selectedLocationId, setSelectedLocationId] = useState(-1);
+    var [message, setMessage] = useState("");
+    var [locationIdMessage, setLocationIdMessage] = useState("");
+
+    const handleCount = async () => {
+        if (!selectedColor) {
+            setMessage("Пожалуйста, выберите color");
+            return
+        }
+        if (selectedLocationId === -1) {
+            setMessage("Пожалуйста, введите корректный location_id")
+            return
+        }
+        console.log("Считаем всех с hairColor = ", selectedColor)
+        const hairFilter: FilterOption = {fieldName: "eye_color", operationType: OperationType.EQUAL, value: selectedColor.valueOf().toString()};
+        const locationFilter: FilterOption = {fieldName: "location_id", operationType: OperationType.EQUAL, value: selectedLocationId.toString()}
+        var selectNumber: number = await PersonService.getCount(hairFilter, locationFilter);
+        if (!selectNumber || selectNumber === -1) {
+            setMessage(`Ошибка при подсчете % с eyesColor = ${selectedColor.toString()} `);
+        } else {
+            setMessage(`Объектов с hairColor = ${selectedColor.toString()} и в локации с location_id = ${selectedLocationId} : ${selectNumber}%`);
+        }
+        setSelectedColor(undefined);
+        setSelectedLocationId(-1);
+    }
+
+    const handleChangeLocationId = async (e: ChangeEvent<HTMLInputElement>) => {
+        var currLocationId: number = Number.parseInt(e.target.value);
+        var currLocation: { coords: LocationDTO | undefined; count: number } = await LocationService.getLocationByID(currLocationId);
+        if (currLocation.count < 1) {
+            setLocationIdMessage(`Location с id = ${currLocationId} не существует`)
+            setSelectedLocationId(-1);
+            return
+        }
+        setSelectedLocationId(currLocationId);
+        setLocationIdMessage("");
+    }
+
+    return (
+        <div className={styles.container}>
+            <label className={styles.label}>Выберите цвет глаз:</label>
+            <select
+                id="color"
+                className={styles.select}
+                value={selectedColor}
+                onChange={(e) => {
+                    setSelectedColor(e.target.value as unknown as Color);
+                    if (e.target.value !== "") setMessage("");
+                }}
+            >
+                <option value="">— выберите —</option>
+                {Object.values(Color).map((n) => (
+                    <option key={n} value={n}>
+                        {n}
+                    </option>
+                ))}
+            </select>
+
+            <div className={styles.inputGroup}>
+                <label className={styles.label}>Введите location_id:</label>
+                <input
+                    type="number"
+                    className={styles.input}
+                    onChange={handleChangeLocationId}
+                />
+                {locationIdMessage !== "" && (
+                    <label className={styles.error}>{locationIdMessage}</label>
+                )}
+            </div>
+
+            <button className={styles.button} onClick={handleCount}>
+                Посчитать
+            </button>
+
+            {message !== "" && <label className={styles.message}>{message}</label>}
+        </div>
+    );
+}

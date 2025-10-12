@@ -1,0 +1,57 @@
+import Country from "../../dtos/CountryEnum";
+import {useState} from "react";
+import PersonService from "../../services/PersonService";
+import FilterOption from "../../dtos/FilterOption";
+import OperationType from "../../dtos/OperationType";
+import styles from "../../styles/DeleteNationality.module.css";
+
+export default function DeleteNationality() {
+    var [deletedNationality, setDeletedNationality] = useState<Country | undefined>(undefined);
+    var [message, setMessage] = useState("");
+
+    const handleDelete = async () => {
+        if (!deletedNationality) {
+            setMessage("Пожалуйста, выберите nationality");
+            return
+        }
+        else console.log("Удаляем всех с nationality =", deletedNationality)
+        const currFilter: FilterOption = {fieldName: "nationality", operationType: OperationType.EQUAL, value: deletedNationality.valueOf().toString()};
+        var deleteNumber: number = await PersonService.deletePerson(currFilter);
+        if (!deleteNumber || deleteNumber === -1) {
+            setMessage(`Ошибка при удалении объектов с nationality = ${deletedNationality.toString()} `);
+        } else {
+            setMessage(`Было удалено ${deleteNumber} объектов Person с nationality = ${deletedNationality.toString()}`);
+        }
+        setDeletedNationality(undefined);
+    }
+
+    return (
+        <div className={styles.container}>
+            <label htmlFor="nationality" className={styles.label}>
+                Выберите национальность:
+            </label>
+            <select
+                id="nationality"
+                className={styles.select}
+                value={deletedNationality ?? ""}
+                onChange={(e) => {
+                    setDeletedNationality(e.target.value as unknown as Country);
+                    if (e.target.value !== "") setMessage("");
+                }}
+            >
+                <option value="">— выберите —</option>
+                {Object.values(Country).map((n) => (
+                    <option key={n} value={n}>
+                        {n}
+                    </option>
+                ))}
+            </select>
+
+            {message && <label className={styles.message}>{message}</label>}
+
+            <button className={styles.button} onClick={handleDelete}>
+                Денацификация
+            </button>
+        </div>
+    );
+}
