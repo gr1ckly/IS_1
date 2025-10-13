@@ -1,25 +1,26 @@
 package org.example.lab1.entities.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.example.lab1.entities.dao.Color;
 import org.example.lab1.entities.dao.Country;
 import org.example.lab1.entities.dao.Person;
 
-public record PersonDTO(long id,
+public record PersonDTO(Long id,
                         String name,
                         long coordinatesId,
+                        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
                         java.util.Date creationDate,
                         Color eyeColor,
                         Color hairColor,
-                        long locationId,
+                        Long locationId,
                         Float height,
+                        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
                         java.time.LocalDateTime birthday,
                         Float weight,
                         Country nationality){
     public Person toDAO() {
         Person newPerson =  new Person();
-        newPerson.setId(id);
         newPerson.setName(name);
-        newPerson.setCreationDate(creationDate);
         newPerson.setEyeColor(eyeColor);
         newPerson.setHairColor(hairColor);
         newPerson.setHeight(height);

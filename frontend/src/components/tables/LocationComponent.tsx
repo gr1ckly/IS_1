@@ -1,8 +1,8 @@
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import FilterOption from "../../dtos/FilterOption";
 import OperationType from "../../dtos/OperationType";
-import {SET_CREATE_LOCATION, SET_UPDATE_LOCATION} from "../../consts/StateConsts";
+import {COPY_STATE, SET_CREATE_LOCATION, SET_UPDATE_LOCATION} from "../../consts/StateConsts";
 import LocationDTO from "../../dtos/LocationDTO";
 import TableState from "../../storage/states/TableState";
 import LocationService from "../../services/LocationService";
@@ -28,6 +28,7 @@ export default function LocationComponent () {
     var [filterState, setFilterState] = useState<FilterProps>({});
     var [sortState, setSortState] = useState<SortProps>({});
     var [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+    const currState = useSelector(state => state);
 
     const applyFilters = () => {
         var newFilters: FilterOption[] =[];
@@ -36,9 +37,6 @@ export default function LocationComponent () {
         }
         if (sortState.id != undefined) {
             newFilters.push({fieldName: "id", operationType: sortState.id ? OperationType.SORTED : OperationType.SORTED_DESC});
-        }
-        if (sortState.name != undefined) {
-            newFilters.push({fieldName: "name", operationType: sortState.name ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
         if (sortState.x != undefined) {
             newFilters.push({fieldName: "x", operationType: sortState.x ? OperationType.SORTED : OperationType.SORTED_DESC});
@@ -51,7 +49,7 @@ export default function LocationComponent () {
 
     useEffect(() => {
         updateLocations();
-    }, [tableState]);
+    }, [tableState, currState]);
 
     const handleNext = async () => {
         if (tableState) {
@@ -75,12 +73,12 @@ export default function LocationComponent () {
         const newCount: number = await LocationService.getCount(...currFilters);
         if (newCount != tableState.count) {
             if (newCount <= (tableState.currPage - 1) * tableState.pageSize) {
-                tableState.currPage = ((newCount - 1) / tableState.pageSize) + 1;
+                tableState.currPage = Math.trunc(((newCount - 1) / tableState.pageSize) + 1);
             }
             tableState.count = newCount;
             setTableState(tableState);
         }
-        const newLocations = await LocationService.searchLocations((tableState.currPage - 1) * tableState.pageSize, tableState.pageSize, ...currFilters);
+        const newLocations = await LocationService.searchLocations(Math.trunc((tableState.currPage - 1) * tableState.pageSize), tableState.pageSize, ...currFilters);
         setLocations(newLocations);
     }
 
@@ -135,19 +133,6 @@ export default function LocationComponent () {
                                     })
                                 }
                             />
-                            <select
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    setSortState({
-                                        ...sortState,
-                                        name: val === "" ? undefined : val === "ASC",
-                                    });
-                                }}
-                            >
-                                <option value="">— выберите —</option>
-                                <option value="ASC">ASC</option>
-                                <option value="DESC">DESC</option>
-                            </select>
                         </div>
 
                         <div className={styles.field}>
@@ -213,10 +198,10 @@ export default function LocationComponent () {
                                     <button
                                         className={styles.deleteButton}
                                         onClick={() => {
-                                            if (location.id)
+                                            if (location.id){
                                                 LocationService.deleteLocation(location.id);
-                                        }}
-                                    >
+                                                dispatcher({type: COPY_STATE});
+                                        }}}>
                                         Удалить
                                     </button>
                                 </td>
@@ -240,13 +225,13 @@ export default function LocationComponent () {
 
                     <div className={styles.pagination}>
                         {tableState.currPage > 1 && (
-                            <button onClick={handleNext}>prev</button>
+                            <button onClick={handlePrev}>prev</button>
                         )}
                         {tableState.pageSize <= tableState.count && (
                             <label className={styles.page}>{tableState.currPage}</label>
                         )}
                         {tableState.currPage * tableState.pageSize < tableState.count && (
-                            <button onClick={handlePrev}>next</button>
+                            <button onClick={handleNext}>next</button>
                         )}
                     </div>
                 </div>

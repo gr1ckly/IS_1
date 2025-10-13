@@ -2,7 +2,7 @@ package org.example.lab1.entities.dto;
 
 import org.example.lab1.entities.dao.Location;
 
-public record LocationDTO(long id,
+public record LocationDTO(Long id,
                           Double x,
                           Float y,
                           String name) {

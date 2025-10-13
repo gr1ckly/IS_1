@@ -19,7 +19,7 @@ class LocationService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async searchLocations(offset: number, limit: number, ...options: FilterOption[]) : Promise<LocationDTO[]> {
@@ -41,7 +41,7 @@ class LocationService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async createLocation(data: LocationDTO) : Promise<number> {
@@ -60,7 +60,7 @@ class LocationService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async getLocationByID(id: number) : Promise<{coords: LocationDTO | undefined, count: number}> {
@@ -80,7 +80,7 @@ class LocationService {
         }
 
         const respJson = await response.json();
-        return {coords: respJson.body, count: 1};
+        return {coords: respJson, count: 1};
     }
 
     public static async updateLocation(id: number, location: LocationDTO) : Promise<number> {
@@ -102,7 +102,7 @@ class LocationService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async deleteLocation(id: number) : Promise<number> {
@@ -118,7 +118,7 @@ class LocationService {
             return -1;
         }
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 }
 

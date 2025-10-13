@@ -64,7 +64,9 @@ public class PostgresPersonStorage implements PersonStorage {
             query.append(alias);
             query.append(") FROM person ");
             query.append(alias);
-            count = this.queryConverter.buildQuery(currSession, query, alias, Location.class, options).getFirstResult();
+            Query<?> q = this.queryConverter.buildQuery(currSession, query, alias, null, options);
+            Object res = q.getSingleResult();
+            if (res instanceof Number) count = ((Number) res).intValue();
             tx.commit();
         } catch (Exception e) {
             tx.rollback();

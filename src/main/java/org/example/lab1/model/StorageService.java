@@ -33,8 +33,8 @@ public class StorageService {
     @Autowired
     private CoordinatesStorage coordinatesStorage;
 
-    public long createPerson(Person newPerson, long locationId, long coordinatesId) throws Exception {
-        if (locationId > 0) {
+    public long createPerson(Person newPerson, Long locationId, long coordinatesId) throws Exception {
+        if (locationId != null && locationId > 0) {
             Location currLocation = this.locationStorage.getLocationByID(locationId);
             if (currLocation == null) {
                 throw new BadDataException("Location not found");
@@ -61,12 +61,14 @@ public class StorageService {
         return this.personStorage.searchPersons(offset, limit, options);
     }
 
-    public int updatePerson(long id, Person newPerson, long locationId, long coordinatesId) throws Exception {
-        Location currLocation = this.locationStorage.getLocationByID(locationId);
-        if (currLocation == null) {
-            throw new BadDataException("Location not found");
+    public int updatePerson(long id, Person newPerson, Long locationId, long coordinatesId) throws Exception {
+        if (locationId != null && locationId > 0) {
+            Location currLocation = this.locationStorage.getLocationByID(locationId);
+            if (currLocation == null) {
+                throw new BadDataException("Location not found");
+            }
+            newPerson.setLocation(currLocation);
         }
-        newPerson.setLocation(currLocation);
         Coordinates currCoords = this.coordinatesStorage.getCoordinatesByID(coordinatesId);
         if (currCoords == null) {
             throw new BadDataException("Coordinates not found");

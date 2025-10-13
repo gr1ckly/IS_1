@@ -50,6 +50,7 @@ export default function LocationForm(props: Props) {
 
     return (
         <div className={styles.container}>
+            <label className={styles.label}>Location</label>
             <button
                 className={styles.closeButton}
                 onClick={() => dispatcher({ type: CLEAR_ALL })}

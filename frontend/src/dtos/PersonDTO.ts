@@ -5,12 +5,12 @@ interface PersonDTO {
     id?: number;
     name: string;
     coordinatesId: number;
-    creationDate?: Date;
+    creationDate?: string;
     eyeColor?: Color;
     hairColor: Color;
     locationId?: number;
     height: number;
-    birthday: Date;
+    birthday: string;
     weight?: number;
     nationality: Country;
 }

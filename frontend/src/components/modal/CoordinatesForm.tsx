@@ -56,6 +56,7 @@ export default function CoordinatesForm(props: Props) {
 
     return (
         <div className={styles.container}>
+            <label className={styles.label}>Coordinates</label>
             <button
                 className={styles.closeButton}
                 onClick={() => dispatcher({ type: CLEAR_ALL })}

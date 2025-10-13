@@ -64,9 +64,9 @@ public class PostgresCoordinatesStorage implements CoordinatesStorage {
             query.append(alias);
             query.append(") FROM coordinates ");
             query.append(alias);
-            if (options != null) {
-                count = this.queryConverter.buildQuery(currSession, query, alias, Coordinates.class, options).getFirstResult();
-            }
+            Query<?> q = this.queryConverter.buildQuery(currSession, query, alias, null, options);
+            Object res = q.getSingleResult();
+            if (res instanceof Number) count = ((Number) res).intValue();
             tx.commit();
         } catch (Exception e) {
             tx.rollback();

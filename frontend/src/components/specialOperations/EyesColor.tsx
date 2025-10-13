@@ -23,9 +23,11 @@ export default function EyesColor() {
             setMessage(`Пока не создано ни одного объекта Person`);
             return
         }
-        const currFilter: FilterOption = {fieldName: "eye_color", operationType: OperationType.EQUAL, value: selectedColor.valueOf().toString()};
+        const currFilter: FilterOption = {fieldName: "eye_color", operationType: OperationType.EQUAL, value: Color[selectedColor].toString()};
+        console.log(currFilter.value);
         var selectNumber: number = await PersonService.getCount(currFilter);
-        if (!selectNumber || selectNumber === -1) {
+        console.log(selectNumber);
+        if (selectNumber === -1) {
             setMessage(`Ошибка при подсчете % с eyesColor = ${selectedColor.toString()} `);
         } else {
             setMessage(`Объектов с eyesColor = ${selectedColor.toString()} : ${(selectNumber / allPeopleNumber * 100).toFixed(2)}%`);
@@ -35,6 +37,7 @@ export default function EyesColor() {
 
     return (
         <div className={styles.container}>
+            <label className={styles.label}>Посчитать % людей с определенным цветом глаз</label>
             <label className={styles.label}>Выберите цвет глаз:</label>
             <select
                 id="color"
@@ -46,7 +49,7 @@ export default function EyesColor() {
                 }}
             >
                 <option value="">— выберите —</option>
-                {Object.values(Color).map((n) => (
+                {Object.values(Color).filter((v) => typeof v === "string").map((n) => (
                     <option key={n} value={n}>
                         {n}
                     </option>
@@ -58,8 +61,6 @@ export default function EyesColor() {
             <button className={styles.button} onClick={handleCount}>
                 Посчитать
             </button>
-
-            {message && <label className={styles.message}>{message}</label>}
         </div>
     );
 }

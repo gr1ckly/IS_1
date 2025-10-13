@@ -11,6 +11,7 @@ import org.example.lab1.entities.dto.LocationDTO;
 @Table(name = "location")
 @Getter
 @Setter
+@Cacheable(false)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Location {
@@ -21,7 +22,7 @@ public class Location {
             nullable = false
     )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "x", nullable = false)
     private Double x; //Поле не может быть null

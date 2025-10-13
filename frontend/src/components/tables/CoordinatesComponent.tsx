@@ -1,4 +1,4 @@
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import LocationDTO from "../../dtos/LocationDTO";
 import TableState from "../../storage/states/TableState";
@@ -6,6 +6,7 @@ import FilterOption from "../../dtos/FilterOption";
 import OperationType from "../../dtos/OperationType";
 import LocationService from "../../services/LocationService";
 import {
+    COPY_STATE,
     SET_CREATE_COORDINATES,
     SET_CREATE_LOCATION,
     SET_CREATE_PERSON, SET_UPDATE_COORDINATES,
@@ -28,6 +29,7 @@ export default function CoordinatesComponent() {
     var [tableState, setTableState] = useState<TableState>({pageSize: 5, currPage: 1, count: 0});
     var [sortState, setSortState] = useState<SortProps>({});
     var [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+    const currState = useSelector(state => state);
 
     const applyFilters = () => {
         var newFilters: FilterOption[] =[];
@@ -45,7 +47,7 @@ export default function CoordinatesComponent() {
 
     useEffect(() => {
         updateCoordinates();
-    }, [tableState]);
+    }, [tableState, currState]);
 
     const handleNext = async () => {
         if (tableState) {
@@ -69,18 +71,17 @@ export default function CoordinatesComponent() {
         const newCount: number = await CoordinatesService.getCount(...currFilters);
         if (newCount != tableState.count) {
             if (newCount <= (tableState.currPage - 1) * tableState.pageSize) {
-                tableState.currPage = ((newCount - 1) / tableState.pageSize) + 1;
+                tableState.currPage = Math.trunc(((newCount - 1) / tableState.pageSize) + 1);
             }
             tableState.count = newCount;
             setTableState(tableState);
         }
-        const newCoordinates = await CoordinatesService.searchCoordinates((tableState.currPage - 1) * tableState.pageSize, tableState.pageSize, ...currFilters);
+        const newCoordinates = await CoordinatesService.searchCoordinates(Math.trunc((tableState.currPage - 1) * tableState.pageSize), tableState.pageSize, ...currFilters);
         setCoordinates(newCoordinates);
     }
 
 
     return (
-        <>
             <div className="CoordinatesComponent">
                 <button  onClick={() => dispatcher({type: SET_CREATE_COORDINATES, payload: true})}>
                     Создать Coordinates
@@ -154,53 +155,64 @@ export default function CoordinatesComponent() {
                     </>
                 )}
                 <div className="table">
-                    <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>name</th>
-                        <th>x</th>
-                        <th>y</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {coordinates.map((coordinates) => (
-                        <>
-                            <th>{coordinates.id ? coordinates.id : ""}</th>
-                            <th>{coordinates.x}</th>
-                            <th>{coordinates.y}</th>
-                            <th>
-                                <button className="delete-button"
+                    <table className="coordinates-table">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>x</th>
+                            <th>y</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {coordinates.map((coord, index) => (
+                            <tr key={coord.id ?? index}>
+                                <td>{coord.id ?? ""}</td>
+                                <td>{coord.x}</td>
+                                <td>{coord.y}</td>
+                                <td>
+                                    <button
+                                        className="delete-button"
                                         onClick={() => {
-                                            if (coordinates.id) CoordinatesService.deleteCoordinates(coordinates.id);
-                                        }}/>
-                            </th>
-                            <th>
-                                <button className="update-button"
-                                        onClick={() => {dispatcher({type: SET_UPDATE_COORDINATES, payload: coordinates})}}
-                                />
-                            </th>
-                        </>
-                    ))}
-                    </tbody>
-                    {tableState.currPage > 1 &&
-                        <button
-                            onClick={handleNext}
-                        >
-                            prev
-                        </button>
-                    }
-                    {tableState.pageSize <= tableState.count && <label className="page">{tableState.currPage}</label>}
-                    {tableState.currPage * tableState.pageSize < tableState.count  && (
-                        <button
-                            onClick={handlePrev}
-                        >
-                            next
-                        </button>
-                    )}
+                                            if (coord.id) {
+                                                CoordinatesService.deleteCoordinates(coord.id);
+                                                dispatcher({type: COPY_STATE})
+                                            }
+                                        }}
+                                    >
+                                        Удалить
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        className="update-button"
+                                        onClick={() => {
+                                            dispatcher({ type: SET_UPDATE_COORDINATES, payload: coord });
+                                        }}
+                                    >
+                                        Обновить
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colSpan={5} className="pagination">
+                                {tableState.currPage > 1 && (
+                                    <button onClick={handlePrev}>prev</button>
+                                )}
+                                <span className="page">{tableState.currPage}</span>
+                                {tableState.currPage * tableState.pageSize < tableState.count && (
+                                    <button onClick={handleNext}>next</button>
+                                )}
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
                 </div>
+
             </div>
-        </>
     )
 }

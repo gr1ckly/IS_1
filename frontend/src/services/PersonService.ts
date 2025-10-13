@@ -20,7 +20,7 @@ class PersonService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async searchPersons(offset: number, limit: number, ...options: FilterOption[]) : Promise<PersonDTO[]> {
@@ -42,7 +42,7 @@ class PersonService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async createPerson(data: PersonDTO) : Promise<number> {
@@ -61,7 +61,7 @@ class PersonService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async getPersonByID(id: number) : Promise<{coords: PersonDTO | null, count: number}> {
@@ -81,7 +81,7 @@ class PersonService {
         }
 
         const respJson = await response.json();
-        return {coords: respJson.body, count: 1};
+        return {coords: respJson, count: 1};
     }
 
     public static async updatePerson(id: number, person: PersonDTO) : Promise<number> {
@@ -103,7 +103,7 @@ class PersonService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async deletePerson(...options: FilterOption[]) : Promise<number> {
@@ -121,7 +121,7 @@ class PersonService {
             return -1;
         }
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 }
 

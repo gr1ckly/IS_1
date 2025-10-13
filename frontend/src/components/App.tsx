@@ -16,22 +16,23 @@ function App() {
     useEffect(() => {
         const eventSource = new EventSource(BASE_URL + SSE_PATH);
 
-        eventSource.onopen = () => {
-            console.log("Подключено к SSE");
-        };
+        eventSource.onopen = () => console.log("Подключено SSE");
 
-        eventSource.onmessage = (event) => {
-            console.log("Новое событие:", event.data);
-            dispatcher({type: COPY_STATE});
-        };
+        eventSource.addEventListener("update", (e) => {
+            console.log("Обновление SSE:", e.data);
+            dispatcher({ type: COPY_STATE });
+        });
 
-        eventSource.onerror = (error) => {
-            console.error("Ошибка SSE:", error);
-            eventSource.close();
+        eventSource.addEventListener("ping", () => {
+            console.log("keep-alive SSE");
+        });
+
+        eventSource.onerror = (err) => {
+            console.error("Ошибка SSE:", err);
         };
 
         return () => {
-            console.log("Закрываем соединение");
+            console.log("Закрыто SSE");
             eventSource.close();
         };
     }, []);

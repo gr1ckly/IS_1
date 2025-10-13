@@ -12,6 +12,7 @@ import org.hibernate.annotations.Check;
 @Table(name = "coordinates")
 @Getter
 @Setter
+@Cacheable(false)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Coordinates {
@@ -22,7 +23,7 @@ public class Coordinates {
             nullable = false
     )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "x")
     @Check(constraints = "x > -459")

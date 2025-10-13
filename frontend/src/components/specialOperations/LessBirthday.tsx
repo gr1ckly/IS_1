@@ -12,8 +12,8 @@ export default function LessBirthday() {
     var [message, setMessage] = useState("");
 
     const handleGet = async () => {
-        if (birthday != "") {
-            setMessage("Пожалуйста, выберите nationality");
+        if (birthday === "") {
+            setMessage("Пожалуйста, введите корректный birthday");
             return
         }
         else console.log("Выводим всех с birthday <", birthday);
@@ -36,12 +36,15 @@ export default function LessBirthday() {
 
     return (
         <div className={styles.container}>
+            <label className={styles.label}>Вывести людей, день рождения которых позже заданного</label>
             <label className={styles.label}>Введите день рождения:</label>
             <input
                 type="date"
                 className={styles.input}
                 value={birthday}
-                onChange={(e) => setBirthday(e.target.value)}
+                onChange={(e) => {
+                    console.log(e.target.value);
+                    setBirthday(e.target.value ? new Date(e.target.value).toISOString().split("T")[0] : "")}}
             />
 
             {message !== "" && <label className={styles.message}>{message}</label>}

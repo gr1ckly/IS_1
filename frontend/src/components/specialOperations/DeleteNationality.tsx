@@ -4,10 +4,13 @@ import PersonService from "../../services/PersonService";
 import FilterOption from "../../dtos/FilterOption";
 import OperationType from "../../dtos/OperationType";
 import styles from "../../styles/DeleteNationality.module.css";
+import {useDispatch} from "react-redux";
+import {COPY_STATE} from "../../consts/StateConsts";
 
 export default function DeleteNationality() {
-    var [deletedNationality, setDeletedNationality] = useState<Country | undefined>(undefined);
-    var [message, setMessage] = useState("");
+    const [deletedNationality, setDeletedNationality] = useState<Country | undefined>(undefined);
+    const [message, setMessage] = useState("");
+    const dispatcher = useDispatch();
 
     const handleDelete = async () => {
         if (!deletedNationality) {
@@ -15,7 +18,8 @@ export default function DeleteNationality() {
             return
         }
         else console.log("Удаляем всех с nationality =", deletedNationality)
-        const currFilter: FilterOption = {fieldName: "nationality", operationType: OperationType.EQUAL, value: deletedNationality.valueOf().toString()};
+        const currFilter: FilterOption = {fieldName: "nationality", operationType: OperationType.EQUAL, value: Country[deletedNationality].toString()};
+        console.log(currFilter.value);
         var deleteNumber: number = await PersonService.deletePerson(currFilter);
         if (!deleteNumber || deleteNumber === -1) {
             setMessage(`Ошибка при удалении объектов с nationality = ${deletedNationality.toString()} `);
@@ -23,10 +27,12 @@ export default function DeleteNationality() {
             setMessage(`Было удалено ${deleteNumber} объектов Person с nationality = ${deletedNationality.toString()}`);
         }
         setDeletedNationality(undefined);
+        dispatcher({type: COPY_STATE});
     }
 
     return (
         <div className={styles.container}>
+            <label className={styles.label}>Удалить людей с выбранной национальностью</label>
             <label htmlFor="nationality" className={styles.label}>
                 Выберите национальность:
             </label>
@@ -40,7 +46,7 @@ export default function DeleteNationality() {
                 }}
             >
                 <option value="">— выберите —</option>
-                {Object.values(Country).map((n) => (
+                {Object.values(Country).filter((v) => typeof v === "string").map((n) => (
                     <option key={n} value={n}>
                         {n}
                     </option>

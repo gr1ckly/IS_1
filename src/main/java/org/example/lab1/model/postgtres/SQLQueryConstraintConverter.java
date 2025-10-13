@@ -16,73 +16,80 @@ public class SQLQueryConstraintConverter<T> implements QueryConstraintConverter<
 
     @Override
     public Query<T> buildQuery(Session session, StringBuilder defaultQuery, String alias, Class currClass, FilterOption... constraints) {
-        defaultQuery.append(" WHERE");
         boolean isFirstConstraint = true;
-
         Map<String, Object> params = new HashMap<>();
 
-        for (FilterOption filter : constraints) {
-            if (!params.containsKey(filter.fieldName()) && filter.operationType() != OperationType.SORTED && filter.operationType() != OperationType.SORTED_DESC) {
-                Object currValue = convertValue(filter.value());
-                if (filter.operationType() == OperationType.GREATER) {
-                    if (!isFirstConstraint) {
-                        defaultQuery.append(" AND ");
-                    } else {
-                        defaultQuery.append(" WHERE ");
-                    }
+        if (constraints != null) {
+            for (FilterOption filter : constraints) {
+                if (filter == null) continue;
+                if (!params.containsKey(filter.fieldName()) &&
+                        filter.operationType() != OperationType.SORTED &&
+                        filter.operationType() != OperationType.SORTED_DESC) {
+
+                    Object currValue = convertValue(filter.value());
+                    String field = filter.fieldName();
+                    if (field == null || field.isBlank()) continue;
+
+                    if (!isFirstConstraint) defaultQuery.append(" AND ");
+                    else defaultQuery.append(" WHERE ");
                     isFirstConstraint = false;
-                    defaultQuery.append(alias).append(".").append(filter.value()).append(" > :").append(filter.value());
-                    params.put(filter.fieldName(), currValue);
-                } else if (filter.operationType() == OperationType.LESS) {
-                    if (!isFirstConstraint) {
-                        defaultQuery.append(" AND ");
-                    } else {
-                        defaultQuery.append(" WHERE ");
+
+                    switch (filter.operationType()) {
+                        case GREATER -> defaultQuery.append(alias).append('.').append(field).append(" > :").append(field);
+                        case LESS -> defaultQuery.append(alias).append('.').append(field).append(" < :").append(field);
+                        case EQUAL -> defaultQuery.append(alias).append('.').append(field).append(" = :").append(field);
                     }
-                    isFirstConstraint = false;
-                    defaultQuery.append(alias).append(".").append(filter.value()).append(" < :").append(filter.value());
-                    params.put(filter.fieldName(), currValue);
-                } else if (filter.operationType() == OperationType.EQUAL) {
-                    if (!isFirstConstraint) {
-                        defaultQuery.append(" AND ");
-                    } else {
-                        defaultQuery.append(" WHERE ");
-                    }
-                    isFirstConstraint = false;
-                    defaultQuery.append(alias).append(".").append(filter.value()).append(" = :").append(filter.value());
-                    params.put(filter.fieldName(), currValue);
+                    params.put(field, currValue);
                 }
             }
         }
 
-        List<FilterOption> sortedFields = Arrays.stream(constraints).filter(f -> f.operationType() == OperationType.SORTED || f.operationType() == OperationType.SORTED_DESC).toList();
+        boolean isAggregateQuery = defaultQuery.toString().toLowerCase().contains("count(")
+                || defaultQuery.toString().toLowerCase().contains("sum(")
+                || defaultQuery.toString().toLowerCase().contains("avg(")
+                || defaultQuery.toString().toLowerCase().contains("min(")
+                || defaultQuery.toString().toLowerCase().contains("max(");
 
-        if (!sortedFields.isEmpty()) {
-            defaultQuery.append(" ORDER BY ");
-            defaultQuery.append(sortedFields.stream()
-                    .map(f -> alias + "." +f.fieldName() + (f.operationType() == OperationType.SORTED_DESC ? " DESC": ""))
-                    .collect(Collectors.joining(", "))
-            );
+        if (!isAggregateQuery) {
+            List<FilterOption> sortedFields = constraints == null ? List.of()
+                    : Arrays.stream(constraints)
+                    .filter(f -> f.operationType() == OperationType.SORTED || f.operationType() == OperationType.SORTED_DESC)
+                    .toList();
+
+            if (!sortedFields.isEmpty()) {
+                defaultQuery.append(" ORDER BY ");
+                defaultQuery.append(sortedFields.stream()
+                        .map(f -> alias + "." + f.fieldName() + (f.operationType() == OperationType.SORTED_DESC ? " DESC" : ""))
+                        .collect(Collectors.joining(", ")));
+            }
         }
-        Query<T> query = session.createNativeQuery(defaultQuery.toString(), currClass);
-        params.forEach(query::setParameter);
+
+        Query<T> query = currClass != null
+                ? session.createNativeQuery(defaultQuery.toString(), currClass)
+                : session.createNativeQuery(defaultQuery.toString());
+
+        params.forEach((k, v) -> {
+            try { query.setParameter(k, v); } catch (Exception ignored) {}
+        });
         return query;
     }
 
     private Object convertValue(String value) {
         if (value == null) return null;
-        try {
-            return Long.parseLong(value);
-        } catch (Exception e) {}
-        try {
+        if (value.matches("^-?\\d+\\.\\d+$")) {
             return Double.parseDouble(value);
-        } catch (Exception e) {}
-        try {
-            return Date.parse(value);
-        } catch (Exception e) {}
+        }
+        if (value.matches("^-?\\d+$")) {
+            try {
+                return Long.parseLong(value);
+            } catch (NumberFormatException e) {
+                return value;
+            }
+        }
         try {
             return LocalDateTime.parse(value);
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         return value;
     }
+
 }

@@ -1,61 +1,71 @@
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import styles from "../../styles/PersonTable.module.css";
 import TableState from "../../storage/states/TableState";
 import PersonDTO from "../../dtos/PersonDTO";
-import {useEffect, useState} from "react";
 import PersonService from "../../services/PersonService";
-import FilterOption from "../../dtos/FilterOption";
 import OperationType from "../../dtos/OperationType";
-import {useDispatch} from "react-redux";
-import {SET_UPDATE_PERSON} from "../../consts/StateConsts";
-import styles from "../../styles/PersonTable.module.css";
+import {COPY_STATE, SET_UPDATE_PERSON} from "../../consts/StateConsts";
 
-interface Props{
-    tableState: TableState,
-    onChangeTableState: (ts: TableState) => void,
+interface Props {
+    tableState: TableState;
+    onChangeTableState: (newState: TableState) => void;
 }
 
 export default function PersonTable(props: Props) {
     const dispatcher = useDispatch();
+    const currState = useSelector(state => state);
     const [persons, setPersons] = useState<PersonDTO[]>([]);
+    const [localTableState, setLocalTableState] = useState({ ...props.tableState });
+
+    useEffect(() => {
+        setLocalTableState({ ...props.tableState });
+    }, [props.tableState]);
 
     useEffect(() => {
         updatePersons();
-    }, [props.tableState]);
+    }, [localTableState, currState]);
 
-    const handleNext = async () => {
-        if (props.tableState) {
-            props.tableState.currPage += 1;
-            props.onChangeTableState(props.tableState);
-        }
-    }
+    const updateLocalState = (newState: TableState) => {
+        setLocalTableState(newState);
+        props.onChangeTableState(newState);
+    };
 
-    const handlePrev = async () => {
-        if (props.tableState && props.tableState.currPage > 1) {
-            props.tableState.currPage -= 1;
-            props.onChangeTableState(props.tableState);
+    const handleNext = () => {
+        if (localTableState) {
+            updateLocalState({ ...localTableState, currPage: localTableState.currPage + 1 });
         }
-    }
+    };
+
+    const handlePrev = () => {
+        if (localTableState && localTableState.currPage > 1) {
+            updateLocalState({ ...localTableState, currPage: localTableState.currPage - 1 });
+        }
+    };
 
     const updatePersons = async () => {
-        var currFilters: FilterOption[];
-        if (!props.tableState.filters || props.tableState.filters.length < 1) {
-            currFilters = [];
-        } else {
-            currFilters = props.tableState.filters;
-        }
-        const newCount: number = await PersonService.getCount(...currFilters);
-        if (newCount !== props.tableState.count) {
-            if (newCount <= (props.tableState.currPage - 1) * props.tableState.pageSize) {
-                props.tableState.currPage = ((newCount - 1) / props.tableState.pageSize) + 1;
-            }
-            props.tableState.count = newCount;
-            props.onChangeTableState(props.tableState);
-        }
-        const newPersons = await PersonService.searchPersons((props.tableState.currPage - 1) * props.tableState.pageSize, props.tableState.pageSize, ...currFilters);
-        setPersons(newPersons);
-    }
+        const currFilters = localTableState.filters ?? [];
+        const newCount = await PersonService.getCount(...currFilters);
 
+        let adjustedState = { ...localTableState };
+        if (newCount !== localTableState.count) {
+            if (newCount <= (localTableState.currPage - 1) * localTableState.pageSize) {
+                adjustedState.currPage = Math.trunc(((newCount - 1) / localTableState.pageSize) + 1);
+            }
+            adjustedState.count = newCount;
+            updateLocalState(adjustedState);
+        }
+
+        const newPersons = await PersonService.searchPersons(
+            Math.trunc((adjustedState.currPage - 1) * adjustedState.pageSize),
+            Math.trunc(adjustedState.pageSize),
+            ...currFilters
+        );
+        setPersons(newPersons);
+    };
 
     return (
+        <div>
         <table className={styles.table}>
             <thead className={styles.thead}>
             <tr className={styles.tr}>
@@ -75,17 +85,21 @@ export default function PersonTable(props: Props) {
             </tr>
             </thead>
             <tbody className={styles.tbody}>
-            {persons.map((person) => (
-                <tr className={styles.tr}>
+            {persons.map(person => (
+                <tr className={styles.tr} key={person.id ?? Math.random()}>
                     <th className={styles.th}>{person.id ?? ""}</th>
                     <th className={styles.th}>{person.name}</th>
                     <th className={styles.th}>{person.coordinatesId}</th>
-                    <th className={styles.th}>{person.creationDate ? person.creationDate.toISOString().split("T")[0] : ""}</th>
+                    <th className={styles.th}>
+                        {person.creationDate ? new Date(person.creationDate).toLocaleString() : ""}
+                    </th>
                     <th className={styles.th}>{person.eyeColor?.toString() ?? ""}</th>
                     <th className={styles.th}>{person.hairColor}</th>
                     <th className={styles.th}>{person.locationId ?? ""}</th>
                     <th className={styles.th}>{person.height}</th>
-                    <th className={styles.th}>{person.birthday.toISOString().split("T")[0]}</th>
+                    <th className={styles.th}>
+                        {person.birthday ? new Date(person.birthday).toLocaleDateString() : ""}
+                    </th>
                     <th className={styles.th}>{person.weight}</th>
                     <th className={styles.th}>{person.nationality.toString()}</th>
                     <th className={styles.th}>
@@ -97,27 +111,37 @@ export default function PersonTable(props: Props) {
                                     operationType: OperationType.EQUAL,
                                     value: person.id?.toString(),
                                 });
+                                dispatcher({ type: COPY_STATE });
                             }}
-                        />
+                        >
+                            Удалить
+                        </button>
                     </th>
                     <th className={styles.th}>
                         <button
                             className={styles.updateButton}
                             onClick={() => dispatcher({ type: SET_UPDATE_PERSON, payload: person })}
-                        />
+                        >
+                            Обновить
+                        </button>
                     </th>
                 </tr>
             ))}
             </tbody>
-            {props.tableState.currPage > 1 && (
-                <button className={styles.pageButton} onClick={handleNext}>prev</button>
-            )}
-            {props.tableState.pageSize <= props.tableState.count && (
-                <label className={styles.pageLabel}>{props.tableState.currPage}</label>
-            )}
-            {props.tableState.currPage * props.tableState.pageSize < props.tableState.count && (
-                <button className={styles.pageButton} onClick={handlePrev}>next</button>
-            )}
         </table>
-    )
+            {localTableState.currPage > 1 && (
+                <button className={styles.pageButton} onClick={handlePrev}>
+                    prev
+                </button>
+            )}
+            {localTableState.pageSize <= localTableState.count && (
+                <label className={styles.pageLabel}>{localTableState.currPage}</label>
+            )}
+            {localTableState.currPage * localTableState.pageSize < localTableState.count && (
+                <button className={styles.pageButton} onClick={handleNext}>
+                    next
+                </button>
+            )}
+        </div>
+    );
 }

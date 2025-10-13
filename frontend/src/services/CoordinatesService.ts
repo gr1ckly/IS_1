@@ -19,7 +19,7 @@ class CoordinatesService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async searchCoordinates(offset: number, limit: number, ...options: FilterOption[]) : Promise<CoordinatesDTO[]> {
@@ -41,7 +41,7 @@ class CoordinatesService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async createCoordinates(data: CoordinatesDTO) : Promise<number> {
@@ -60,7 +60,7 @@ class CoordinatesService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async getCoordinatesByID(id: number) : Promise<{coords: CoordinatesDTO | undefined, count: number}> {
@@ -80,7 +80,7 @@ class CoordinatesService {
         }
 
         const respJson = await response.json();
-        return {coords: respJson.body, count: 1};
+        return {coords: respJson, count: 1};
     }
 
     public static async updateCoordinates(id: number, coords: CoordinatesDTO) : Promise<number> {
@@ -102,7 +102,7 @@ class CoordinatesService {
         }
 
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 
     public static async deleteCoordinates(id: number) : Promise<number> {
@@ -118,7 +118,7 @@ class CoordinatesService {
             return -1;
         }
         const respJson = await response.json();
-        return respJson.body;
+        return respJson;
     }
 }
 

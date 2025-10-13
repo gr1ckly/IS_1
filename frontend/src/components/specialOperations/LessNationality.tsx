@@ -15,7 +15,8 @@ export default function LessNationality() {
             return
         }
         else console.log("Считаем всех с nationality <", selectedNationality)
-        const currFilter: FilterOption = {fieldName: "nationality", operationType: OperationType.LESS, value: selectedNationality.valueOf().toString()};
+        const currFilter: FilterOption = {fieldName: "nationality", operationType: OperationType.LESS, value: Country[selectedNationality].toString()};
+        console.log(currFilter.value);
         var selectNumber: number = await PersonService.getCount(currFilter);
         if (!selectNumber || selectNumber === -1) {
             setMessage(`Ошибка при подсчете объектов с nationality < ${selectedNationality.toString()} `);
@@ -27,6 +28,7 @@ export default function LessNationality() {
 
     return (
         <div className={styles.container}>
+            <label className={styles.label}>Посчитать людей с национальностью меньше, чем заданная</label>
             <label className={styles.label}>Выберите национальность:</label>
             <select
                 id="nationality"
@@ -38,7 +40,7 @@ export default function LessNationality() {
                 }}
             >
                 <option value="">— выберите —</option>
-                {Object.values(Country).map((n) => (
+                {Object.values(Country).filter((v) => typeof v === "string").map((n) => (
                     <option key={n} value={n}>
                         {n}
                     </option>

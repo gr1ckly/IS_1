@@ -2,7 +2,7 @@ package org.example.lab1.entities.dto;
 
 import org.example.lab1.entities.dao.Coordinates;
 
-public record CoordinatesDTO(long id,
+public record CoordinatesDTO(Long id,
                              double x,
                              Integer y) {
     public Coordinates toDAO() {

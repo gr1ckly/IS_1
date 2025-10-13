@@ -1,5 +1,6 @@
 package org.example.lab1.entities.dao;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +10,15 @@ import org.example.lab1.entities.dto.PersonDTO;
 import org.hibernate.annotations.*;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
 @Entity
 @Table(name = "person")
 @Getter
 @Setter
+@Cacheable(false)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Person {
@@ -24,7 +30,7 @@ public class Person {
     )
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Check(constraints = "id > 0")
-    private long id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+    private Long id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
 
     @Column(name = "name",nullable = false)
     @Check(constraints = "name != ''")
@@ -34,9 +40,9 @@ public class Person {
     @JoinColumn(name = "coordinates_id", nullable = false)
     private Coordinates coordinates; //Поле не может быть null
 
-    @Column(name = "creation_date", nullable = false)
-    @Generated
-    private java.util.Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    @Column(name = "creation_date", nullable = false, updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
 
     @Column(name = "eye_color")
     @Enumerated(EnumType.ORDINAL)
@@ -46,7 +52,7 @@ public class Person {
     @Enumerated(EnumType.ORDINAL)
     private Color hairColor; //Поле не может быть null
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "location_id")
     private Location location; //Поле может быть null
 
@@ -55,6 +61,7 @@ public class Person {
     private Float height; //Поле не может быть null, Значение поля должно быть больше 0
 
     @Column(name = "birthday",nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private java.time.LocalDateTime birthday; //Поле не может быть null
 
     @Column(name = "weight")
@@ -65,7 +72,29 @@ public class Person {
     @Enumerated(EnumType.ORDINAL)
     private Country nationality; //Поле не может быть null
 
+    @PrePersist
+    public void creationDate() {
+        if (this.creationDate == null) {
+            this.creationDate = new Date();
+        }
+    }
+
     public PersonDTO toDTO() {
-        return new PersonDTO(this.id, this.name, this.coordinates.getId(), this.creationDate, this.eyeColor, this.hairColor, this.location.getId(), this.height, this.birthday, this.weight, this.nationality);
+        Long coordinatesId = this.coordinates != null ? this.coordinates.getId() : null;
+        Long locationId = this.location != null ? this.location.getId() : null;
+
+        return new PersonDTO(
+                this.id,
+                this.name,
+                coordinatesId,
+                this.creationDate,
+                this.eyeColor,
+                this.hairColor,
+                locationId,
+                this.height,
+                this.birthday,
+                this.weight,
+                this.nationality
+        );
     }
 }

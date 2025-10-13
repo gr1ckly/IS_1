@@ -135,23 +135,6 @@ export default function PersonComponent() {
                                 });
                             }}
                         />
-                        <select
-                            className={styles.select}
-                            id="sort"
-                            onChange={(e) => {
-                                if (e.target.value === "") {
-                                    setSortState({ ...sortState, name: undefined });
-                                } else if (e.target.value === "ASC") {
-                                    setSortState({ ...sortState, name: true });
-                                } else if (e.target.value === "DESC") {
-                                    setSortState({ ...sortState, name: false });
-                                }
-                            }}
-                        >
-                            <option value="">— выберите —</option>
-                            <option value="ASC">ASC</option>
-                            <option value="DESC">DESC</option>
-                        </select>
                     </div>
 
                     <div className={styles.field}>
@@ -187,6 +170,153 @@ export default function PersonComponent() {
                                     setSortState({ ...sortState, creationDate: true });
                                 } else if (e.target.value === "DESC") {
                                     setSortState({ ...sortState, creationDate: false });
+                                }
+                            }}
+                        >
+                            <option value="">— выберите —</option>
+                            <option value="ASC">ASC</option>
+                            <option value="DESC">DESC</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label}>{"eyeColor"}</label>
+                        <select
+                            className={styles.select}
+                            id="sort"
+                            onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setSortState({ ...sortState, eyeColor: undefined });
+                                } else if (e.target.value === "ASC") {
+                                    setSortState({ ...sortState, eyeColor: true });
+                                } else if (e.target.value === "DESC") {
+                                    setSortState({ ...sortState, eyeColor: false });
+                                }
+                            }}
+                        >
+                            <option value="">— выберите —</option>
+                            <option value="ASC">ASC</option>
+                            <option value="DESC">DESC</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label}>{"hairColor"}</label>
+                        <select
+                            className={styles.select}
+                            id="sort"
+                            onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setSortState({ ...sortState, hairColor: undefined });
+                                } else if (e.target.value === "ASC") {
+                                    setSortState({ ...sortState, hairColor: true });
+                                } else if (e.target.value === "DESC") {
+                                    setSortState({ ...sortState, hairColor: false });
+                                }
+                            }}
+                        >
+                            <option value="">— выберите —</option>
+                            <option value="ASC">ASC</option>
+                            <option value="DESC">DESC</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label}>{"location_id"}</label>
+                        <select
+                            className={styles.select}
+                            id="sort"
+                            onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setSortState({ ...sortState, locationId: undefined });
+                                } else if (e.target.value === "ASC") {
+                                    setSortState({ ...sortState, locationId: true });
+                                } else if (e.target.value === "DESC") {
+                                    setSortState({ ...sortState, locationId: false });
+                                }
+                            }}
+                        >
+                            <option value="">— выберите —</option>
+                            <option value="ASC">ASC</option>
+                            <option value="DESC">DESC</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label}>{"height"}</label>
+                        <select
+                            className={styles.select}
+                            id="sort"
+                            onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setSortState({ ...sortState, height: undefined });
+                                } else if (e.target.value === "ASC") {
+                                    setSortState({ ...sortState, height: true });
+                                } else if (e.target.value === "DESC") {
+                                    setSortState({ ...sortState, height: false });
+                                }
+                            }}
+                        >
+                            <option value="">— выберите —</option>
+                            <option value="ASC">ASC</option>
+                            <option value="DESC">DESC</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label}>{"birthday"}</label>
+                        <select
+                            className={styles.select}
+                            id="sort"
+                            onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setSortState({ ...sortState, birthday: undefined });
+                                } else if (e.target.value === "ASC") {
+                                    setSortState({ ...sortState, birthday: true });
+                                } else if (e.target.value === "DESC") {
+                                    setSortState({ ...sortState, birthday: false });
+                                }
+                            }}
+                        >
+                            <option value="">— выберите —</option>
+                            <option value="ASC">ASC</option>
+                            <option value="DESC">DESC</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label}>{"weight"}</label>
+                        <select
+                            className={styles.select}
+                            id="sort"
+                            onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setSortState({ ...sortState, weight: undefined });
+                                } else if (e.target.value === "ASC") {
+                                    setSortState({ ...sortState, weight: true });
+                                } else if (e.target.value === "DESC") {
+                                    setSortState({ ...sortState, weight: false });
+                                }
+                            }}
+                        >
+                            <option value="">— выберите —</option>
+                            <option value="ASC">ASC</option>
+                            <option value="DESC">DESC</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label}>{"nationality"}</label>
+                        <select
+                            className={styles.select}
+                            id="sort"
+                            onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setSortState({ ...sortState, nationality: undefined });
+                                } else if (e.target.value === "ASC") {
+                                    setSortState({ ...sortState, nationality: true });
+                                } else if (e.target.value === "DESC") {
+                                    setSortState({ ...sortState, nationality: false });
                                 }
                             }}
                         >
