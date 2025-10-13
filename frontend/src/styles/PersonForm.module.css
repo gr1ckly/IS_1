@@ -2,32 +2,49 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    background: #f9f9fb;
+    background: #000000;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border: 2px solid #ffffff;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.15);
     width: 360px;
+    color: #ffffff;
+    opacity: 0;
+    animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .closeButton {
     align-self: flex-end;
-    background: #d9534f;
-    color: white;
+    background: #ff3b3b;
+    color: #ffffff;
     border: none;
     padding: 6px 10px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .closeButton:hover {
-    background: #c9302c;
+    transform: scale(1.05);
+    background: #b91c1c;
 }
 
 .idLabel {
     font-weight: bold;
     font-size: 14px;
-    color: #555;
+    color: #ffffff;
     margin-bottom: 8px;
 }
 
@@ -38,42 +55,48 @@
 
 .label {
     font-size: 14px;
-    color: #333;
+    color: #ffffff;
     margin-bottom: 4px;
 }
 
 .input,
 .select {
     padding: 6px 10px;
-    border: 1px solid #ccc;
+    border: 2px solid #ffffff;
     border-radius: 6px;
     outline: none;
-    transition: border-color 0.2s;
+    background-color: #000000;
+    color: #ffffff;
+    transition: border-color 0.2s ease, transform 0.1s ease;
 }
 
 .input:focus,
 .select:focus {
-    border-color: #007bff;
+    border-color: #ccff00;
+    transform: scale(1.02);
 }
 
 .actionButton {
-    background: #007bff;
-    color: white;
-    border: none;
+    background: #ffffff;
+    color: #000000;
+    border: 2px solid #ffffff;
     padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
     margin-top: 6px;
-    transition: background 0.2s;
+    transition: transform 0.2s ease, background 0.3s ease, border-color 0.3s ease;
 }
 
 .actionButton:hover {
-    background: #0056b3;
+    transform: scale(1.05);
+    background: #b3e600;
+    border-color: #b3e600;
+    color: #000000;
 }
 
 .message {
-    color: #d9534f;
+    color: #ff3b3b;
     font-size: 13px;
     margin-top: 6px;
 }

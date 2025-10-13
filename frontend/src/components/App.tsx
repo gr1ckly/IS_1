@@ -16,15 +16,15 @@ function App() {
     useEffect(() => {
         const eventSource = new EventSource(BASE_URL + SSE_PATH);
 
-        eventSource.onopen = () => console.log("Подключено SSE");
+        eventSource.onopen = () => console.log("SSE подключено");
 
         eventSource.addEventListener("update", (e) => {
-            console.log("Обновление SSE:", e.data);
+            console.log("Новое событие SSE:", e.data);
             dispatcher({ type: COPY_STATE });
         });
 
         eventSource.addEventListener("ping", () => {
-            console.log("keep-alive SSE");
+            console.log("пинг SSE");
         });
 
         eventSource.onerror = (err) => {
@@ -32,18 +32,30 @@ function App() {
         };
 
         return () => {
-            console.log("Закрыто SSE");
+            console.log("SSE закрыто");
             eventSource.close();
         };
     }, []);
 
     return (
         <div className={styles.App}>
-            <Popup/>
-            <PersonComponent/>
-            <LocationComponent/>
-            <CoordinatesComponent/>
-            <SpecialOperationsComponent/>
+            <Popup />
+            <div className={styles.layout}>
+                <div className={styles.person}>
+                    <PersonComponent />
+                </div>
+                <div className={styles.middleRow}>
+                    <div className={styles.left}>
+                        <LocationComponent />
+                    </div>
+                    <div className={styles.right}>
+                        <CoordinatesComponent />
+                    </div>
+                </div>
+                <div className={styles.special}>
+                    <SpecialOperationsComponent />
+                </div>
+            </div>
         </div>
     )
 }

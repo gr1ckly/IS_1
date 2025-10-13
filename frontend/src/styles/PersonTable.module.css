@@ -2,52 +2,77 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
+    background-color: #000000;
+    color: #ffffff;
 }
 
 .thead {
-    background-color: #f5f5f5;
-}
-
-.tbody {
-}
-
-.tr {
+    background-color: #111111;
 }
 
 .th {
-    border: 1px solid #ccc;
+    border-bottom: 2px solid #ffffff;
     padding: 0.5rem;
     text-align: left;
+    color: #ffffff;
+}
+
+.td {
+    border-bottom: 2px solid #ffffff;
+    padding: 0.5rem;
+    color: #ffffff;
 }
 
 .deleteButton {
-    background-color: #ff4d4f;
-    color: white;
+    background-color: #ff3b3b;
+    color: #ffffff;
     border: none;
     padding: 0.3rem 0.6rem;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 6px;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.deleteButton:hover {
+    transform: scale(1.05);
+    background-color: #b91c1c;
 }
 
 .updateButton {
-    background-color: #1890ff;
-    color: white;
+    background-color: #b3e600;
+    color: #000000;
     border: none;
     padding: 0.3rem 0.6rem;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 6px;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.updateButton:hover {
+    transform: scale(1.05);
+    background-color: #15803d;
 }
 
 .pageButton {
     margin: 0.5rem;
     padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    background-color: white;
+    border-radius: 6px;
+    border: 2px solid #ffffff;
+    background-color: #ffffff;
+    color: #000000;
     cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.pageButton:hover {
+    transform: scale(1.05);
+    background-color: #b3e600;
+    border-color: #b3e600;
+    color: #000000;
 }
 
 .pageLabel {
     margin: 0 0.5rem;
     font-weight: bold;
+    color: #ffffff;
 }

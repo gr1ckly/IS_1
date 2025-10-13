@@ -6,7 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.lab1.entities.dto.CoordinatesDTO;
+import org.example.lab1.model.postgtres.HibernateFactory;
+import org.hibernate.Session;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "coordinates")
@@ -32,6 +39,23 @@ public class Coordinates {
     @Column(name = "y", nullable = false)
     @Check(constraints = "y > -238")
     private Integer y; //Значение поля должно быть больше -238, Поле не может быть null
+
+    @OneToMany(mappedBy = "coordinates", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Person> persons = new ArrayList<>();
+
+    public Coordinates(Long id, double x, Integer y) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+    }
+
+    @PreRemove
+    private void  deletePersonsNull() {
+        for  (Person person : persons) {
+            person.setCoordinates(null);
+        }
+    }
 
     public CoordinatesDTO toDTO() {
         return new CoordinatesDTO(this.id, this.x, this.y);

@@ -1,77 +1,187 @@
 .container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    background: #f9f9fb;
-    padding: 20px;
+    gap: 16px;
+    background: #000000;
+    padding: 24px;
+    border: 2px solid #ffffff;
     border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    width: 280px;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.15);
+    width: 500px;
+    color: #ffffff;
+    animation: fadeIn 0.4s ease-in-out forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .closeButton {
     align-self: flex-end;
-    background: #d9534f;
-    color: white;
-    border: none;
-    padding: 6px 10px;
+    background: #ff3b3b;
+    color: #ffffff;
+    border: 2px solid #ff3b3b;
+    padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .closeButton:hover {
-    background: #c9302c;
+    transform: scale(1.05);
+    background: #b02a37;
+    border-color: #b02a37;
 }
 
 .idLabel {
     font-weight: bold;
     font-size: 14px;
-    color: #555;
+    color: #ffffff;
     margin-bottom: 8px;
 }
 
 .field {
     display: flex;
     flex-direction: column;
+    gap: 6px;
 }
 
 .label {
     font-size: 14px;
-    color: #333;
-    margin-bottom: 4px;
+    color: #ffffff;
 }
 
 .input {
-    padding: 6px 10px;
-    border: 1px solid #ccc;
+    padding: 8px 10px;
+    border: 2px solid #ffffff;
     border-radius: 6px;
     outline: none;
-    transition: border-color 0.2s;
+    background: #000000;
+    color: #ffffff;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, transform 0.1s ease;
 }
 
 .input:focus {
-    border-color: #007bff;
+    border-color: #ccff00;
+    transform: scale(1.02);
 }
 
-.actionButton {
-    background: #007bff;
-    color: white;
-    border: none;
+.actionButton,
+.createButton,
+.filterButton,
+.applyButton,
+.updateButton,
+.deleteButton {
+    background: #ffffff;
+    color: #000000;
+    border: 2px solid #ffffff;
     padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+
+.actionButton:hover,
+.createButton:hover,
+.filterButton:hover,
+.applyButton:hover,
+.updateButton:hover,
+.deleteButton:hover {
+    transform: scale(1.05);
+    background-color: #b3e600;
+    border-color: #b3e600;
+    color: #000000;
+}
+
+.actionButton:active,
+.createButton:active,
+.filterButton:active,
+.applyButton:active,
+.updateButton:active,
+.deleteButton:active {
+    background-color: #15803d;
+    border-color: #15803d;
+    color: #000000;
+}
+
+.deleteButton {
+    background-color: #ff3b3b;
+    color: #ffffff;
+    border: none;
+}
+
+.deleteButton:hover {
+    background-color: #b91c1c;
+}
+
+.updateButton {
+    border: 2px solid #000000;
+    background-color: #b3e600;
+    color: #000000;
+}
+
+.updateButton:hover {
+    background-color: #15803d;
+    border: 2px solid #15803d;
+}
+
+.table {
+    margin-top: 10px;
+    width: 100%;
+    overflow-x: auto;
+    border: 2px solid #ffffff;
+    border-radius: 8px;
+    background-color: #000000;
+    color: #ffffff;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border-bottom: 2px solid #ffffff;
+    padding: 8px 12px;
+    text-align: left;
+    color: #ffffff;
+}
+
+.pagination {
     margin-top: 6px;
-    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.actionButton:hover {
-    background: #0056b3;
+.pageButton {
+    margin: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    border: 2px solid #ffffff;
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
 
-.message {
-    color: #d9534f;
-    font-size: 13px;
-    margin-top: 8px;
+.pageButton:hover {
+    transform: scale(1.05);
+    background-color: #b3e600;
+    border-color: #b3e600;
+    color: #000000;
+}
+
+.pageLabel {
+    font-weight: bold;
+    color: #ffffff;
 }

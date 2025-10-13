@@ -1,70 +1,119 @@
 .LocationComponent {
-    margin: 20px;
-    padding: 15px;
-    background: #f9fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 18px 22px;
     border-radius: 12px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+    background-color: #000000;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.15);
+    width: 450px;
+    animation: fadeIn 0.4s ease-in-out forwards;
+    opacity: 0;
 }
 
-.button {
-    margin-right: 10px;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.buttonRow,
+.LocationComponent > .button {
+    display: flex;
+    gap: 10px;
+}
+
+.button,
+.applyButton,
+.updateButton,
+.deleteButton,
+.pageButton {
     padding: 8px 14px;
-    background-color: #4f46e5;
-    color: white;
-    border: none;
+    border: 2px solid #ffffff;
     border-radius: 8px;
+    background-color: #ffffff;
+    color: #000000;
     cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease, border-color 0.3s ease;
 }
 
-.button:hover {
-    background-color: #4338ca;
+.button:hover,
+.applyButton:hover,
+.updateButton:hover,
+.deleteButton:hover {
+    transform: scale(1.05);
+    background-color: #b3e600;
+    border-color: #b3e600;
+    color: #000000;
+}
+
+.button:active,
+.applyButton:active,
+.updateButton:active,
+.deleteButton:active {
+    background-color: #15803d;
+    border-color: #15803d;
+    color: #000000;
 }
 
 .filters {
-    margin-top: 15px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 10px;
-    background: #eef2ff;
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 12px;
+    background-color: #111111;
+    border: 2px solid #ffffff;
     border-radius: 10px;
 }
 
 .field {
     display: flex;
     flex-direction: column;
-    width: 160px;
 }
 
 .label {
-    font-size: 14px;
-    color: #333;
+    font-weight: 500;
+    color: #ffffff;
     margin-bottom: 4px;
 }
 
-.input {
+.input,
+.select {
     padding: 6px;
-    border: 1px solid #ccc;
+    border: 2px solid #ffffff;
     border-radius: 6px;
+    background-color: #000000;
+    color: #ffffff;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.2s ease, transform 0.1s ease;
+}
+
+.input:focus,
+.select:focus {
+    border-color: #ccff00;
+    transform: scale(1.02);
 }
 
 .applyButton {
-    background-color: #16a34a;
-    color: white;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.applyButton:hover {
-    background-color: #15803d;
+    grid-column: 1 / -1;
+    justify-self: start;
 }
 
 .table {
-    margin-top: 20px;
+    margin-top: 10px;
     width: 100%;
     overflow-x: auto;
+    border-radius: 8px;
+    background-color: #000000;
 }
 
 table {
@@ -72,22 +121,18 @@ table {
     border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
     padding: 8px 12px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 2px solid #ffffff;
     text-align: left;
-}
-
-.deleteButton, .updateButton {
-    padding: 6px 10px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    color: #ffffff;
 }
 
 .deleteButton {
-    background-color: #dc2626;
-    color: white;
+    background-color: #ff3b3b;
+    color: #ffffff;
+    border: none;
 }
 
 .deleteButton:hover {
@@ -95,21 +140,47 @@ th, td {
 }
 
 .updateButton {
-    background-color: #3b82f6;
-    color: white;
+    background-color: #b3e600;
+    color: #000000;
+    border: 2px solid #000000;
 }
 
 .updateButton:hover {
-    background-color: #2563eb;
+    background-color: #15803d;
+    border: 2px solid #15803d;
 }
 
 .pagination {
-    margin-top: 10px;
+    margin-top: 6px;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.page {
+.pageButton {
+    padding: 8px 14px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.header {
+    display: flex;
+    justify-content: left   ;
+    gap: 10px;
+    padding: 10px;
+}
+
+.pageButton:hover {
+    transform: scale(1.05);
+    background-color: #b3e600;
+    border-color: #b3e600;
+    color: #000000;
+}
+
+.pageLabel {
     font-weight: bold;
+    color: #ffffff;
 }

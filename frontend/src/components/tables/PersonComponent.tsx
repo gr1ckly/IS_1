@@ -86,20 +86,20 @@ export default function PersonComponent() {
 
     return (
         <div className={styles.personComponent}>
-            <button
-                className={styles.button}
-                onClick={() => dispatcher({ type: SET_CREATE_PERSON, payload: true })}
-            >
-                Создать Person
-            </button>
-            <button
-                className={styles.button}
-                onClick={() => {
-                    setIsFilterOpen(!isFilterOpen);
-                }}
-            >
-                Фильтры/Сортировка
-            </button>
+            <div className={styles.buttonRow}>
+                <button
+                    className={styles.button}
+                    onClick={() => dispatcher({ type: SET_CREATE_PERSON, payload: true })}
+                >
+                    Создать Person
+                </button>
+                <button
+                    className={styles.button}
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                >
+                    Фильтры/Сортировка
+                </button>
+            </div>
             {isFilterOpen && (
                 <div className={styles.filterPanel}>
                     <div className={styles.field}>

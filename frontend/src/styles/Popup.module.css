@@ -4,7 +4,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,16 +12,17 @@
 }
 
 .popupContent {
-    background-color: #ffffff;
+    background-color: #000000;
     padding: 24px;
     border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-    min-width: 400px;
-    max-width: 600px;
-    width: 80%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 4px 30px rgba(255, 255, 255, 0.15);
+    width: auto;
+    max-width: 90vw;
     max-height: 90vh;
     overflow-y: auto;
-    animation: fadeIn 0.2s ease-in-out;
+    color: #ffffff;
+    animation: fadeIn 0.3s ease-in-out forwards;
 }
 
 @keyframes fadeIn {

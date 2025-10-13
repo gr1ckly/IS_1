@@ -1,12 +1,39 @@
-.App {
+.layout {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    gap: 1rem;
-    padding: 1rem;
+    gap: 40px;
     width: 100%;
+    background-color: #1a1a1a;
     min-height: 100vh;
-    background-color: #f0f2f5;
-    font-family: Arial, sans-serif;
+    padding: 40px 0;
+    color: #ffffff;
+}
+
+.person {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.middleRow {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 80px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.location,
+.coordinates {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.special {
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }

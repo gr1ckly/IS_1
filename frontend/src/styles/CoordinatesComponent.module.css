@@ -1,117 +1,215 @@
-.container {
-    background-color: #fafafa;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    width: fit-content;
-    margin: 16px auto;
+.personComponent {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    background-color: #000000;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    opacity: 0;
+    animation: fadeIn 0.4s ease-in-out forwards;
 }
 
-.header {
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.buttonRow {
     display: flex;
-    justify-content: space-between;
     gap: 10px;
+    justify-content: flex-start;
+    margin-bottom: 6px;
 }
 
+.button,
 .createButton,
 .filterButton,
 .applyButton,
 .pageButton,
 .updateButton,
 .deleteButton {
-    background-color: #007bff;
-    color: white;
-    border: none;
+    padding: 8px 14px;
+    border: 2px solid #ffffff;
     border-radius: 8px;
-    padding: 8px 12px;
+    background-color: #ffffff;
+    color: #000000;
     cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 14px;
+    transition: transform 0.2s ease, background 0.3s ease, border-color 0.3s ease;
 }
 
+.button:hover,
 .createButton:hover,
 .filterButton:hover,
 .applyButton:hover,
 .pageButton:hover,
 .updateButton:hover,
 .deleteButton:hover {
-    background-color: #0056b3;
+    transform: scale(1.05);
+    background-color: #b3e600;
+    border-color: #b3e600;
+    color: #000000;
 }
 
-.filters {
-    display: flex;
+.button:active,
+.createButton:active,
+.filterButton:active,
+.applyButton:active,
+.pageButton:active,
+.updateButton:active,
+.deleteButton:active {
+    background-color: #15803d;
+    border-color: #15803d;
+    color: #000000;
+}
+
+.filterPanel {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-    background-color: #f2f4f8;
     padding: 12px;
+    background: #111111;
+    border: 2px solid #ffffff;
     border-radius: 10px;
+    margin-top: 4px;
 }
 
 .field {
     display: flex;
     flex-direction: column;
-    gap: 4px;
 }
 
 .label {
-    font-size: 13px;
     font-weight: 500;
-    color: #333;
+    color: #ffffff;
+    margin-bottom: 4px;
 }
 
+.input,
 .select {
-    padding: 6px 8px;
-    border: 1px solid #ccc;
+    padding: 6px;
+    border: 2px solid #ffffff;
     border-radius: 6px;
-    font-size: 14px;
+    background-color: #000000;
+    color: #ffffff;
     outline: none;
+    transition: border-color 0.2s ease, transform 0.1s ease;
+}
+
+.input:focus,
+.select:focus {
+    border-color: #ccff00;
+    transform: scale(1.02);
+}
+
+.applyButton {
+    grid-column: 1 / -1;
+    justify-self: start;
+}
+
+.ContainerComponent {
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #000000;
+    border: 2px solid #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: #ffffff;
+}
+
+.header {
+    display: flex;
+    justify-content: left   ;
+    gap: 10px;
+}
+
+.filters {
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    padding: 10px;
+    background-color: #111111;
+    border: 2px solid #ffffff;
+    border-radius: 10px;
 }
 
 .table {
+    margin-top: 10px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.table th,
-.table td {
-    border-bottom: 1px solid #ddd;
+th, td {
     padding: 8px 12px;
+    border-bottom: 2px solid #ffffff;
     text-align: left;
-}
-
-.table th {
-    background-color: #f2f4f8;
-    font-weight: 600;
+    color: #ffffff;
 }
 
 .deleteButton {
-    background-color: #dc3545;
+    background-color: #ff3b3b;
+    color: #ffffff;
+    border: none;
 }
 
 .deleteButton:hover {
-    background-color: #b02a37;
+    background-color: #b91c1c;
+    color: #ffffff;
 }
 
 .updateButton {
-    background-color: #28a745;
+    border: 2px solid #000000;
+    background-color: #b3e600;
+    color: #000000;
 }
 
 .updateButton:hover {
-    background-color: #1e7e34;
+    background-color: #15803d;
+    border: 2px solid #15803d;
 }
 
 .pagination {
+    margin-top: 6px;
     display: flex;
-    justify-content: center;
     align-items: center;
     gap: 10px;
 }
 
+.pageButton {
+    padding: 8px 14px;
+    border: 2px solid #ffffff;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease, border-color 0.3s ease;
+}
+
+.pageButton:hover {
+    transform: scale(1.05);
+    background-color: #b3e600;
+    border-color: #b3e600;
+    color: #000000;
+}
+
 .pageLabel {
-    font-size: 14px;
-    color: #333;
+    font-weight: bold;
+    color: #ffffff;
 }

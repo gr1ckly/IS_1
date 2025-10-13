@@ -10,7 +10,6 @@ RUN mvn clean package -DskipTests
 FROM tomcat:10.1-jdk17-temurin
 WORKDIR /usr/local/tomcat
 
-# Удаляем дефолтный ROOT и копируем наш WAR
 RUN rm -rf webapps/ROOT
 COPY --from=builder /app/target/*.war webapps/ROOT.war
 

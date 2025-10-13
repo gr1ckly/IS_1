@@ -84,8 +84,8 @@ export default function LocationComponent () {
 
 
     return (
-        <>
             <div className={styles.LocationComponent}>
+                <div className={styles.header}>
                 <button
                     className={styles.button}
                     onClick={() => dispatcher({ type: SET_CREATE_LOCATION, payload: true })}
@@ -99,13 +99,13 @@ export default function LocationComponent () {
                 >
                     Фильтры/Сортировка
                 </button>
-
+                </div>
                 {isFilterOpen && (
                     <div className={styles.filters}>
-                        {/* Поле id */}
                         <div className={styles.field}>
                             <label className={styles.label}>id</label>
                             <select
+                                className={styles.select}
                                 onChange={(e) => {
                                     const val = e.target.value;
                                     setSortState({
@@ -120,7 +120,6 @@ export default function LocationComponent () {
                             </select>
                         </div>
 
-                        {/* Поле name */}
                         <div className={styles.field}>
                             <label className={styles.label}>name</label>
                             <input
@@ -138,6 +137,7 @@ export default function LocationComponent () {
                         <div className={styles.field}>
                             <label className={styles.label}>x:</label>
                             <select
+                                className={styles.select}
                                 onChange={(e) => {
                                     const val = e.target.value;
                                     setSortState({
@@ -155,6 +155,7 @@ export default function LocationComponent () {
                         <div className={styles.field}>
                             <label className={styles.label}>y:</label>
                             <select
+                                className={styles.select}
                                 onChange={(e) => {
                                     const val = e.target.value;
                                     setSortState({
@@ -215,7 +216,7 @@ export default function LocationComponent () {
                                             })
                                         }
                                     >
-                                        Изменить
+                                        Обновить
                                     </button>
                                 </td>
                             </tr>
@@ -225,17 +226,16 @@ export default function LocationComponent () {
 
                     <div className={styles.pagination}>
                         {tableState.currPage > 1 && (
-                            <button onClick={handlePrev}>prev</button>
+                            <button className={styles.pageButton} onClick={handlePrev}>prev</button>
                         )}
                         {tableState.pageSize <= tableState.count && (
                             <label className={styles.page}>{tableState.currPage}</label>
                         )}
                         {tableState.currPage * tableState.pageSize < tableState.count && (
-                            <button onClick={handleNext}>next</button>
+                            <button className={styles.pageButton} onClick={handleNext}>next</button>
                         )}
                     </div>
                 </div>
             </div>
-        </>
     )
 }

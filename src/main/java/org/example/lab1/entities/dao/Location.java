@@ -6,6 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.lab1.entities.dto.LocationDTO;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "location")
@@ -32,6 +37,23 @@ public class Location {
 
     @Column(name = "name", length = 871)
     private String name; //Длина строки не должна быть больше 871, Поле может быть null
+
+    @OneToMany(mappedBy = "location", cascade = {}, orphanRemoval = false)
+    private List<Person> persons = new ArrayList<>();
+
+    @PreRemove
+    private void  setPersonsNull() {
+        for  (Person person : persons) {
+            person.setLocation(null);
+        }
+    }
+
+    public Location(Long id, Double x, Float y, String name) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.name = name;
+    }
 
     public LocationDTO toDTO() {
         return new LocationDTO(this.id, this.x, this.y, this.name);

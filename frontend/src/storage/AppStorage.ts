@@ -1,6 +1,5 @@
-import {Action, createStore, Reducer} from "@reduxjs/toolkit";
+import {createStore, Reducer} from "@reduxjs/toolkit";
 import AppState from "./states/AppState";
-import TableState from "./states/TableState";
 import AppAction from "./Action";
 import {
     CLEAR_ALL, COPY_STATE,

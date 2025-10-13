@@ -2,6 +2,8 @@ package org.example.lab1.entities.dao;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.ForeignKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,7 +39,8 @@ public class Person {
     private String name; //Поле не может быть null, Строка не может быть пустой
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coordinates_id", nullable = false)
+    @JoinColumn(name = "coordinates_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Coordinates coordinates; //Поле не может быть null
 
     @Column(name = "creation_date", nullable = false, updatable = false)
@@ -52,8 +55,9 @@ public class Person {
     @Enumerated(EnumType.ORDINAL)
     private Color hairColor; //Поле не может быть null
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "location_id")
+    @ManyToOne(fetch =  FetchType.LAZY)
+    @JoinColumn(name = "location_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Location location; //Поле может быть null
 
     @Column(name = "height",nullable = false)

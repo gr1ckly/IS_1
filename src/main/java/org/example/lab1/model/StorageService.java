@@ -33,6 +33,9 @@ public class StorageService {
     @Autowired
     private CoordinatesStorage coordinatesStorage;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public long createPerson(Person newPerson, Long locationId, long coordinatesId) throws Exception {
         if (locationId != null && locationId > 0) {
             Location currLocation = this.locationStorage.getLocationByID(locationId);
@@ -46,6 +49,7 @@ public class StorageService {
             throw new BadDataException("Coordinates not found");
         }
         newPerson.setCoordinates(currCoords);
+        notificationService.sendMessage("update");
         return this.personStorage.createPerson(newPerson);
     }
 
@@ -74,14 +78,17 @@ public class StorageService {
             throw new BadDataException("Coordinates not found");
         }
         newPerson.setCoordinates(currCoords);
+        notificationService.sendMessage("update");
         return this.personStorage.updatePerson(id, newPerson);
     }
 
     public int deletePersonsByFilters(FilterOption... options) throws Exception {
+        notificationService.sendMessage("update");
         return this.personStorage.deletePersonByFilter(options);
     }
 
     public long createLocation(Location newLocation) throws Exception {
+        notificationService.sendMessage("update");
         return this.locationStorage.createLocation(newLocation);
     }
 
@@ -98,14 +105,17 @@ public class StorageService {
     }
 
     public int updateLocation(long id, Location newLocation) throws Exception {
+        notificationService.sendMessage("update");
         return this.locationStorage.updateLocation(id, newLocation);
     }
 
     public int deleteLocation(long id) throws Exception {
+        notificationService.sendMessage("update");
         return this.locationStorage.deleteLocation(id);
     }
 
     public long createCoordinates(Coordinates newCoordinates) throws Exception {
+        notificationService.sendMessage("update");
         return this.coordinatesStorage.createCoordinates(newCoordinates);
     }
 
@@ -122,10 +132,12 @@ public class StorageService {
     }
 
     public int updateCoordinates(long id, Coordinates newCoordinates) throws Exception {
+        notificationService.sendMessage("update");
         return this.coordinatesStorage.updateCoordinates(id, newCoordinates);
     }
 
     public int deleteCoordinates(long id) throws Exception {
+        notificationService.sendMessage("update");
         return this.coordinatesStorage.deleteCoordinates(id);
     }
 }

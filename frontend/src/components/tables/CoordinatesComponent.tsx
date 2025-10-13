@@ -1,20 +1,16 @@
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import LocationDTO from "../../dtos/LocationDTO";
 import TableState from "../../storage/states/TableState";
 import FilterOption from "../../dtos/FilterOption";
 import OperationType from "../../dtos/OperationType";
-import LocationService from "../../services/LocationService";
 import {
     COPY_STATE,
     SET_CREATE_COORDINATES,
-    SET_CREATE_LOCATION,
-    SET_CREATE_PERSON, SET_UPDATE_COORDINATES,
-    SET_UPDATE_LOCATION
+    SET_UPDATE_COORDINATES,
 } from "../../consts/StateConsts";
 import CoordinatesDTO from "../../dtos/CoordinatesDTO";
 import CoordinatesService from "../../services/CoordinatesService";
-import coordinatesService from "../../services/CoordinatesService";
+import styles from "../../styles/CoordinatesComponent.module.css"
 
 interface SortProps {
     id?: boolean,
@@ -82,137 +78,120 @@ export default function CoordinatesComponent() {
 
 
     return (
-            <div className="CoordinatesComponent">
-                <button  onClick={() => dispatcher({type: SET_CREATE_COORDINATES, payload: true})}>
+        <div className={styles.ContainerComponent}>
+            <div className={styles.header}>
+                <button className={styles.createButton} onClick={() => dispatcher({type: SET_CREATE_COORDINATES, payload: true})}>
                     Создать Coordinates
                 </button>
-                <button onClick={() => {setIsFilterOpen(!isFilterOpen)}}>
+                <button className={styles.filterButton} onClick={() => {setIsFilterOpen(!isFilterOpen)}}>
                     Фильтры/Сортировка
                 </button>
-                {isFilterOpen && (
-                    <>
-                        <div className="field">
-                            <label className="label">id:</label>
-                            <select
-                                id="sort"
-                                onChange={(e) => {
-                                    if (e.target.value === "") {
-                                        setSortState({...sortState, id: undefined});
-                                    } else if (e.target.value === "ASC") {
-                                        setSortState({...sortState, id: true});
-                                    } else if (e.target.value === "DESC") {
-                                        setSortState({...sortState, id: false});
+            </div>
+            {isFilterOpen && (
+                <div className={styles.filters}>
+                    <div className={styles.field}>
+                        <label className={styles.label}>id:</label>
+                        <select className={styles.select} onChange={(e) => {
+                            if (e.target.value === "") {
+                                setSortState({...sortState, id: undefined});
+                            } else if (e.target.value === "ASC") {
+                                setSortState({...sortState, id: true});
+                            } else if (e.target.value === "DESC") {
+                                setSortState({...sortState, id: false});
+                            }
+                        }}>
+                            <option value="">— выберите —</option>
+                            <option value="ASC">ASC</option>
+                            <option value="DESC">DESC</option>
+                        </select>
+                    </div>
+                    <div className={styles.field}>
+                        <label className={styles.label}>x:</label>
+                        <select className={styles.select} onChange={(e) => {
+                            if (e.target.value === "") {
+                                setSortState({...sortState, x: undefined});
+                            } else if (e.target.value === "ASC") {
+                                setSortState({...sortState, x: true});
+                            } else if (e.target.value === "DESC") {
+                                setSortState({...sortState, x: false});
+                            }
+                        }}>
+                            <option value="">— выберите —</option>
+                            <option value="ASC">ASC</option>
+                            <option value="DESC">DESC</option>
+                        </select>
+                    </div>
+                    <div className={styles.field}>
+                        <label className={styles.label}>y:</label>
+                        <select className={styles.select} onChange={(e) => {
+                            if (e.target.value === "") {
+                                setSortState({...sortState, y: undefined});
+                            } else if (e.target.value === "ASC") {
+                                setSortState({...sortState, y: true});
+                            } else if (e.target.value === "DESC") {
+                                setSortState({...sortState, y: false});
+                            }
+                        }}>
+                            <option value="">— выберите —</option>
+                            <option value="ASC">ASC</option>
+                            <option value="DESC">DESC</option>
+                        </select>
+                    </div>
+                    <button className={styles.applyButton} onClick={applyFilters}>
+                        Применить
+                    </button>
+                </div>
+            )}
+            <div className={styles.table}>
+                <table className={styles.table}>
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>x</th>
+                        <th>y</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {coordinates.map((coord, index) => (
+                        <tr key={coord.id ?? index}>
+                            <td>{coord.id ?? ""}</td>
+                            <td>{coord.x}</td>
+                            <td>{coord.y}</td>
+                            <td>
+                                <button className={styles.deleteButton} onClick={() => {
+                                    if (coord.id) {
+                                        CoordinatesService.deleteCoordinates(coord.id);
+                                        dispatcher({type: COPY_STATE});
                                     }
-                                }}
-                            >
-                                <option value="">— выберите —</option>
-                                <option value="ASC">ASC</option>
-                                <option value="DESC">DESC</option>
-                            </select>
-                        </div>
-                        <div className="field">
-                            <label className="label">x:</label>
-                            <select
-                                id="sort"
-                                onChange={(e) => {
-                                    if (e.target.value === "") {
-                                        setSortState({...sortState, x: undefined});
-                                    } else if (e.target.value === "ASC") {
-                                        setSortState({...sortState, x: true});
-                                    } else if (e.target.value === "DESC") {
-                                        setSortState({...sortState, x: false});
-                                    }
-                                }}
-                            >
-                                <option value="">— выберите —</option>
-                                <option value="ASC">ASC</option>
-                                <option value="DESC">DESC</option>
-                            </select>
-                        </div>
-                        <div className="field">
-                            <label className="label">y:</label>
-                            <select
-                                id="sort"
-                                onChange={(e) => {
-                                    if (e.target.value === "") {
-                                        setSortState({...sortState, y: undefined});
-                                    } else if (e.target.value === "ASC") {
-                                        setSortState({...sortState, y: true});
-                                    } else if (e.target.value === "DESC") {
-                                        setSortState({...sortState, y: false});
-                                    }
-                                }}
-                            >
-                                <option value="">— выберите —</option>
-                                <option value="ASC">ASC</option>
-                                <option value="DESC">DESC</option>
-                            </select>
-                        </div>
-                        <button
-                            onClick={applyFilters}>
-                            Применить
-                        </button>
-                    </>
-                )}
-                <div className="table">
-                    <table className="coordinates-table">
-                        <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>x</th>
-                            <th>y</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {coordinates.map((coord, index) => (
-                            <tr key={coord.id ?? index}>
-                                <td>{coord.id ?? ""}</td>
-                                <td>{coord.x}</td>
-                                <td>{coord.y}</td>
-                                <td>
-                                    <button
-                                        className="delete-button"
-                                        onClick={() => {
-                                            if (coord.id) {
-                                                CoordinatesService.deleteCoordinates(coord.id);
-                                                dispatcher({type: COPY_STATE})
-                                            }
-                                        }}
-                                    >
-                                        Удалить
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        className="update-button"
-                                        onClick={() => {
-                                            dispatcher({ type: SET_UPDATE_COORDINATES, payload: coord });
-                                        }}
-                                    >
-                                        Обновить
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <td colSpan={5} className="pagination">
-                                {tableState.currPage > 1 && (
-                                    <button onClick={handlePrev}>prev</button>
-                                )}
-                                <span className="page">{tableState.currPage}</span>
-                                {tableState.currPage * tableState.pageSize < tableState.count && (
-                                    <button onClick={handleNext}>next</button>
-                                )}
+                                }}>
+                                    Удалить
+                                </button>
+                            </td>
+                            <td>
+                                <button className={styles.updateButton} onClick={() => {
+                                    dispatcher({ type: SET_UPDATE_COORDINATES, payload: coord });
+                                }}>
+                                    Обновить
+                                </button>
                             </td>
                         </tr>
-                        </tfoot>
-                    </table>
-                </div>
+                    ))}
+                    </tbody>
 
+                </table>
+                        <div className={styles.pagination}>
+                            {tableState.currPage > 1 && (
+                                <button className={styles.pageButton} onClick={handlePrev}>prev</button>
+                            )}
+                            <span className={styles.pageLabel}>{tableState.currPage}</span>
+                            {tableState.currPage * tableState.pageSize < tableState.count && (
+                                <button className={styles.pageButton} onClick={handleNext}>next</button>
+                            )}
+                        </div>
             </div>
+        </div>
+
     )
 }

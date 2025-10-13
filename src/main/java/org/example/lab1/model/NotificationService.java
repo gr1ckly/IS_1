@@ -21,7 +21,7 @@ public class NotificationService {
 
     public void sendMessage(String message) throws Exception {
         for (SseEmitter currEmitter : this.emitters) {
-            currEmitter.send(SseEmitter.event().name("update"));
+            currEmitter.send(SseEmitter.event().name("update").data(message));
         }
     }
 
