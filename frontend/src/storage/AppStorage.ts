@@ -3,7 +3,7 @@ import AppState from "./states/AppState";
 import AppAction from "./Action";
 import {
     CLEAR_ALL, COPY_STATE,
-    SET_CREATE_COORDINATES, SET_CREATE_LOCATION, SET_CREATE_PERSON,
+    SET_CREATE_COORDINATES, SET_CREATE_LOCATION, SET_CREATE_PERSON, SET_NOTIFICATIONS,
     SET_UPDATE_COORDINATES,
     SET_UPDATE_LOCATION,
     SET_UPDATE_PERSON
@@ -17,9 +17,10 @@ export const defaultState: AppState = {
     createCoordinates: false,
     createLocation: false,
     createPerson: false,
+    notifications: [] as string[],
 };
 
-const reducer: Reducer<AppState, AppAction<PersonDTO | LocationDTO | CoordinatesDTO | boolean>> = (state: AppState = defaultState, action: AppAction<PersonDTO | LocationDTO | CoordinatesDTO | boolean>): AppState => {
+const reducer: Reducer<AppState, AppAction<PersonDTO | LocationDTO | CoordinatesDTO | boolean | string[]>> = (state: AppState = defaultState, action: AppAction<PersonDTO | LocationDTO | CoordinatesDTO | boolean | string[]>): AppState => {
     switch (action.type){
         case SET_UPDATE_PERSON:
             return {...defaultState, updatedPerson: action.payload as PersonDTO};
@@ -37,6 +38,8 @@ const reducer: Reducer<AppState, AppAction<PersonDTO | LocationDTO | Coordinates
             return defaultState;
         case COPY_STATE:
             return {...state};
+        case SET_NOTIFICATIONS:
+            return {...state, notifications: action.payload as string[]};
         default:
             return state;
     }

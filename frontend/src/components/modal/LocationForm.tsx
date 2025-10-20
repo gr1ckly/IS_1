@@ -9,7 +9,7 @@ interface Props {
     location?: LocationDTO;
 }
 
-export default function LocationForm(props: Props) {
+export default function LocationForm(props: Readonly<Props>) {
     const dispatcher = useDispatch();
     const [newLocation, setLocation] = useState(
         props.location ??
@@ -45,12 +45,12 @@ export default function LocationForm(props: Props) {
             setMessage(`Ошибка при обновлении Location с id = ${newLocation.id}`);
             return
         }
-        setMessage(`Обновлен Location с id = ${number}`)
+        setMessage(`Обновлен Location с id = ${newLocation.id}`)
     }
 
     return (
         <div className={styles.container}>
-            <label className={styles.label}>Location</label>
+            <span className={styles.label}>Location</span>
             <button
                 className={styles.closeButton}
                 onClick={() => dispatcher({ type: CLEAR_ALL })}
@@ -65,7 +65,7 @@ export default function LocationForm(props: Props) {
             )}
 
             <div className={styles.field}>
-                <label className={styles.label}>X:</label>
+                <span className={styles.label}>X:</span>
                 <input
                     className={styles.input}
                     type="number"
@@ -81,7 +81,7 @@ export default function LocationForm(props: Props) {
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>Y:</label>
+                <span className={styles.label}>Y:</span>
                 <input
                     className={styles.input}
                     type="number"
@@ -97,21 +97,21 @@ export default function LocationForm(props: Props) {
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>Name:</label>
+                <span className={styles.label}>Name (необязательно):</span>
                 <input
                     className={styles.input}
                     type="text"
                     value={newLocation.name}
                     onChange={(e) => {
                         const value = e.target.value;
-                        if (value.length <= 871) {
-                            setLocation({ ...newLocation, name: value });
-                            setNameMessage("");
+                        if (/^-?\d+(\.\d+)?$/.test(value.trim())) {
+                            setNameMessage("Поле name не должно быть числом");
+                        } else if (value.length > 871) {
+                            setNameMessage("Длина поля name не должна превышать 871 символ")
                         } else {
-                            setNameMessage(
-                                "Длина поля name не должна превышать 871 символ"
-                            );
+                            setNameMessage("");
                         }
+                        setLocation({...newLocation, name:value})
                     }}
                 />
                 {nameMessage && (

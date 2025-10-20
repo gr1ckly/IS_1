@@ -40,23 +40,6 @@ public class Coordinates {
     @Check(constraints = "y > -238")
     private Integer y; //Значение поля должно быть больше -238, Поле не может быть null
 
-    @OneToMany(mappedBy = "coordinates", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<Person> persons = new ArrayList<>();
-
-    public Coordinates(Long id, double x, Integer y) {
-        this.id = id;
-        this.x = x;
-        this.y = y;
-    }
-
-    @PreRemove
-    private void  deletePersonsNull() {
-        for  (Person person : persons) {
-            person.setCoordinates(null);
-        }
-    }
-
     public CoordinatesDTO toDTO() {
         return new CoordinatesDTO(this.id, this.x, this.y);
     }

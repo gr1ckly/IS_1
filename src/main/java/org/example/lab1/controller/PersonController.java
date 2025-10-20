@@ -22,7 +22,7 @@ import java.util.List;
         methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}
 )
 public class PersonController {
-    private static final Logger log = LoggerFactory.getLogger(CoordinatesController.class);
+    private static final Logger log = LoggerFactory.getLogger(PersonController.class);
 
     @Autowired
     private StorageService storageService;

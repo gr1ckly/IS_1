@@ -13,14 +13,14 @@ export default function DeleteNationality() {
     const dispatcher = useDispatch();
 
     const handleDelete = async () => {
-        if (!deletedNationality) {
+        if (deletedNationality === undefined) {
             setMessage("Пожалуйста, выберите nationality");
             return
         }
         else console.log("Удаляем всех с nationality =", deletedNationality)
         const currFilter: FilterOption = {fieldName: "nationality", operationType: OperationType.EQUAL, value: Country[deletedNationality].toString()};
         console.log(currFilter.value);
-        var deleteNumber: number = await PersonService.deletePerson(currFilter);
+        const deleteNumber: number = await PersonService.deletePerson(currFilter);
         if (!deleteNumber || deleteNumber === -1) {
             setMessage(`Ошибка при удалении объектов с nationality = ${deletedNationality.toString()} `);
         } else {
@@ -32,7 +32,7 @@ export default function DeleteNationality() {
 
     return (
         <div className={styles.container}>
-            <label className={styles.label}>Удалить людей с выбранной национальностью</label>
+            <span className={styles.label}>Удалить людей с выбранной национальностью</span>
             <label htmlFor="nationality" className={styles.label}>
                 Выберите национальность:
             </label>

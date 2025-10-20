@@ -9,6 +9,7 @@ interface AppState {
     createCoordinates: boolean;
     createLocation: boolean;
     createPerson: boolean;
+    notifications: string[];
 }
 
 export default AppState;

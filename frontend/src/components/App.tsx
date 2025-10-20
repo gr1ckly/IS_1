@@ -9,6 +9,7 @@ import {useDispatch} from "react-redux";
 import {COPY_STATE} from "../consts/StateConsts";
 import {BASE_URL, SSE_PATH} from "../consts/HttpConsts";
 import styles from "../styles/App.module.css";
+import Notification from "./modal/Notification";
 
 function App() {
     const dispatcher = useDispatch();
@@ -35,11 +36,12 @@ function App() {
             console.log("SSE закрыто");
             eventSource.close();
         };
-    }, []);
+    }, [dispatcher]);
 
     return (
         <div className={styles.App}>
-            <Popup />
+            <Notification/>
+            <Popup/>
             <div className={styles.layout}>
                 <div className={styles.person}>
                     <PersonComponent />

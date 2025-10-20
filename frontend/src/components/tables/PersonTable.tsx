@@ -5,43 +5,24 @@ import TableState from "../../storage/states/TableState";
 import PersonDTO from "../../dtos/PersonDTO";
 import PersonService from "../../services/PersonService";
 import OperationType from "../../dtos/OperationType";
-import {COPY_STATE, SET_UPDATE_PERSON} from "../../consts/StateConsts";
+import {COPY_STATE, SET_NOTIFICATIONS, SET_UPDATE_PERSON} from "../../consts/StateConsts";
+import {selectNotifications} from "../../storage/StateSelectors";
 
 interface Props {
     tableState: TableState;
     onChangeTableState: (newState: TableState) => void;
 }
 
-export default function PersonTable(props: Props) {
+export default function PersonTable(props: Readonly<Props>) {
     const dispatcher = useDispatch();
     const currState = useSelector(state => state);
     const [persons, setPersons] = useState<PersonDTO[]>([]);
     const [localTableState, setLocalTableState] = useState({ ...props.tableState });
+    const stateNotifications = useSelector(selectNotifications);
 
     useEffect(() => {
         setLocalTableState({ ...props.tableState });
     }, [props.tableState]);
-
-    useEffect(() => {
-        updatePersons();
-    }, [localTableState, currState]);
-
-    const updateLocalState = (newState: TableState) => {
-        setLocalTableState(newState);
-        props.onChangeTableState(newState);
-    };
-
-    const handleNext = () => {
-        if (localTableState) {
-            updateLocalState({ ...localTableState, currPage: localTableState.currPage + 1 });
-        }
-    };
-
-    const handlePrev = () => {
-        if (localTableState && localTableState.currPage > 1) {
-            updateLocalState({ ...localTableState, currPage: localTableState.currPage - 1 });
-        }
-    };
 
     const updatePersons = async () => {
         const currFilters = localTableState.filters ?? [];
@@ -62,6 +43,27 @@ export default function PersonTable(props: Props) {
             ...currFilters
         );
         setPersons(newPersons);
+    };
+
+    useEffect(() => {
+        updatePersons();
+    }, [localTableState, currState, updatePersons]);
+
+    const updateLocalState = (newState: TableState) => {
+        setLocalTableState(newState);
+        props.onChangeTableState(newState);
+    };
+
+    const handleNext = () => {
+        if (localTableState) {
+            updateLocalState({ ...localTableState, currPage: localTableState.currPage + 1 });
+        }
+    };
+
+    const handlePrev = () => {
+        if (localTableState && localTableState.currPage > 1) {
+            updateLocalState({ ...localTableState, currPage: localTableState.currPage - 1 });
+        }
     };
 
     return (
@@ -105,13 +107,17 @@ export default function PersonTable(props: Props) {
                     <th className={styles.th}>
                         <button
                             className={styles.deleteButton}
-                            onClick={() => {
-                                PersonService.deletePerson({
+                            onClick={async () => {
+                                const number = await PersonService.deletePerson({
                                     fieldName: "id",
                                     operationType: OperationType.EQUAL,
                                     value: person.id?.toString(),
                                 });
-                                dispatcher({ type: COPY_STATE });
+                                if (number === -1) {
+                                    dispatcher({type: SET_NOTIFICATIONS, payload: [...stateNotifications, "Ошибка при удалении Person"]});
+                                } else {
+                                    dispatcher({type: COPY_STATE});
+                                }
                             }}
                         >
                             Удалить

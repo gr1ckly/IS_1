@@ -31,14 +31,14 @@ interface SortProps {
 }
 
 export default function PersonComponent() {
-    var [tableState, setTableState] = useState<TableState>({pageSize: 10, currPage: 1, count: 0});
-    var [filterState, setFilterState] = useState<FilterProps>({});
-    var [sortState, setSortState] = useState<SortProps>({});
-    var [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+    const [tableState, setTableState] = useState<TableState>({pageSize: 10, currPage: 1, count: 0});
+    const [filterState, setFilterState] = useState<FilterProps>({});
+    const [sortState, setSortState] = useState<SortProps>({});
+    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
     const dispatcher = useDispatch();
 
     const applyFilters = () => {
-        var newFilters: FilterOption[] =[];
+        const newFilters: FilterOption[] =[];
         if (filterState.name) {
             newFilters.push({fieldName: "name", operationType: OperationType.EQUAL, value: filterState.name});
         }
@@ -51,34 +51,34 @@ export default function PersonComponent() {
         if (filterState.nationality) {
             newFilters.push({fieldName: "nationality", operationType: OperationType.EQUAL, value: filterState.nationality.valueOf().toString()});
         }
-        if (sortState.id != undefined) {
+        if (sortState.id !== undefined) {
             newFilters.push({fieldName: "id", operationType: sortState.id ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.name != undefined) {
+        if (sortState.name !== undefined) {
             newFilters.push({fieldName: "name", operationType: sortState.name ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.coordinatesId != undefined) {
+        if (sortState.coordinatesId !== undefined) {
             newFilters.push({fieldName: "coordinates_id", operationType: sortState.coordinatesId ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.creationDate != undefined) {
+        if (sortState.creationDate !== undefined) {
             newFilters.push({fieldName: "creation_date", operationType: sortState.creationDate ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.eyeColor != undefined) {
+        if (sortState.eyeColor !== undefined) {
             newFilters.push({fieldName: "eye_color", operationType: sortState.eyeColor ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.hairColor != undefined) {
+        if (sortState.hairColor !== undefined) {
             newFilters.push({fieldName: "hair_color", operationType: sortState.hairColor ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.locationId != undefined) {
+        if (sortState.locationId !== undefined) {
             newFilters.push({fieldName: "location_id", operationType: sortState.locationId ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.height != undefined) {
+        if (sortState.height !== undefined) {
             newFilters.push({fieldName: "height", operationType: sortState.height ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.weight != undefined) {
+        if (sortState.weight !== undefined) {
             newFilters.push({fieldName: "weight", operationType: sortState.weight ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.nationality != undefined) {
+        if (sortState.nationality !== undefined) {
             newFilters.push({fieldName: "nationality", operationType: sortState.nationality ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
         setTableState({...tableState, filters: newFilters});
@@ -131,7 +131,7 @@ export default function PersonComponent() {
                             onChange={(e) => {
                                 setFilterState({
                                     ...filterState,
-                                    name: e.target.value == "" ? undefined : e.target.value,
+                                    name: e.target.value === "" || /^-?\d+(\.\d+)?$/.test(e.target.value.trim()) ? undefined : e.target.value,
                                 });
                             }}
                         />

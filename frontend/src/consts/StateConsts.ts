@@ -6,3 +6,4 @@ export const SET_CREATE_LOCATION: string = "SET_CREATE_LOCATION";
 export const SET_CREATE_COORDINATES: string = "SET_CREATE_COORDINATES";
 export const COPY_STATE: string = "COPY_STATE";
 export const CLEAR_ALL = "CLEAR_ALL";
+export const SET_NOTIFICATIONS = "SET_NOTIFICATIONS";

@@ -1,5 +1,5 @@
 import FilterOption from "../dtos/FilterOption";
-import {BASE_URL, COORDINATES_PATH, LOCATION_PATH} from "../consts/HttpConsts";
+import {BASE_URL, LOCATION_PATH} from "../consts/HttpConsts";
 import LocationDTO from "../dtos/LocationDTO";
 
 class LocationService {
@@ -14,12 +14,11 @@ class LocationService {
             body: JSON.stringify(options)
         });
         if (!response.ok) {
-            console.error("Error while get count locations: " + response.status + "\n With filters: " + options);
+            console.log("Error while get count locations: " + response.status + "\n With filters: " + options);
             return -1;
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async searchLocations(offset: number, limit: number, ...options: FilterOption[]) : Promise<LocationDTO[]> {
@@ -36,12 +35,11 @@ class LocationService {
             body: JSON.stringify(options)
         });
         if (!response.ok) {
-            console.error("Error while search locations: " + response.status + "\n With filters: " + options);
+            console.log("Error while search locations: " + response.status + "\n With filters: " + options);
             return [];
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async createLocation(data: LocationDTO) : Promise<number> {
@@ -55,12 +53,11 @@ class LocationService {
             body: JSON.stringify(data)
         });
         if (!response.ok) {
-            console.error("Error while create location: " + response.status + "\n With location: " + data);
+            console.log("Error while create location: " + response.status + "\n With location: " + data);
             return -1;
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async getLocationByID(id: number) : Promise<{coords: LocationDTO | undefined, count: number}> {
@@ -72,10 +69,10 @@ class LocationService {
             },
         });
         if (response.status === 404) {
-            console.error("Could not find location with id: " + id);
+            console.log("Could not find location with id: " + id);
             return {coords: undefined, count: 0};
         } else if (!response.ok) {
-            console.error("Error while get location: " + response.status + "\n With id: " + id);
+            console.log("Error while get location: " + response.status + "\n With id: " + id);
             return {coords: undefined, count: -1};
         }
 
@@ -94,15 +91,14 @@ class LocationService {
             body: JSON.stringify(location)
         });
         if (response.status === 404) {
-            console.error("Could not find location with id: " + id);
+            console.log("Could not find location with id: " + id);
             return 0;
         } else if (!response.ok) {
-            console.error("Error while update location: " + response.status + "\n With id: " + id);
+            console.log("Error while update location: " + response.status + "\n With id: " + id);
             return -1;
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async deleteLocation(id: number) : Promise<number> {
@@ -114,11 +110,10 @@ class LocationService {
             },
         });
         if (!response.ok) {
-            console.error("Error while delete location: " + response.status + "\n With id: " + id);
+            console.log("Error while delete location: " + response.status + "\n With id: " + id);
             return -1;
         }
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 }
 

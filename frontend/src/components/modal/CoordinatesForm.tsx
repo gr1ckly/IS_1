@@ -9,7 +9,7 @@ interface Props {
     coordinates?: CoordinatesDTO;
 }
 
-export default function CoordinatesForm(props: Props) {
+export default function CoordinatesForm(props: Readonly<Props>) {
     const dispatcher = useDispatch();
     const [newCoordinates, setCoordinates] = useState(
         props.coordinates ??
@@ -51,12 +51,12 @@ export default function CoordinatesForm(props: Props) {
             setMessage(`Ошибка при обновлении Coordinates с id = ${newCoordinates.id}`);
             return
         }
-        setMessage(`Обновлен Coordinates с id = ${number}`)
+        setMessage(`Обновлен Coordinates с id = ${newCoordinates.id}`)
     }
 
     return (
         <div className={styles.container}>
-            <label className={styles.label}>Coordinates</label>
+            <span className={styles.label}>Coordinates</span>
             <button
                 className={styles.closeButton}
                 onClick={() => dispatcher({ type: CLEAR_ALL })}
@@ -71,7 +71,7 @@ export default function CoordinatesForm(props: Props) {
             )}
 
             <div className={styles.field}>
-                <label className={styles.label}>X:</label>
+                <span className={styles.label}>X:</span>
                 <input
                     className={styles.input}
                     type="number"
@@ -87,7 +87,7 @@ export default function CoordinatesForm(props: Props) {
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>Y:</label>
+                <span className={styles.label}>Y:</span>
                 <input
                     className={styles.input}
                     type="number"

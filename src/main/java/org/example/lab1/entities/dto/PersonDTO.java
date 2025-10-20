@@ -7,7 +7,7 @@ import org.example.lab1.entities.dao.Person;
 
 public record PersonDTO(Long id,
                         String name,
-                        long coordinatesId,
+                        Long coordinatesId,
                         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
                         java.util.Date creationDate,
                         Color eyeColor,

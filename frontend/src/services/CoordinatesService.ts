@@ -14,12 +14,11 @@ class CoordinatesService {
             body: JSON.stringify(options)
         });
         if (!response.ok) {
-            console.error("Error while get count coordinates: " + response.status + "\n With filters: " + options);
+            console.log("Error while get count coordinates: " + response.status + "\n With filters: " +  options.toString());
             return -1;
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async searchCoordinates(offset: number, limit: number, ...options: FilterOption[]) : Promise<CoordinatesDTO[]> {
@@ -36,12 +35,11 @@ class CoordinatesService {
             body: JSON.stringify(options)
         });
         if (!response.ok) {
-            console.error("Error while search coordinates: " + response.status + "\n With filters: " + options);
+            console.log("Error while search coordinates: " + response.status + "\n With filters: " + options.toString());
             return [];
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async createCoordinates(data: CoordinatesDTO) : Promise<number> {
@@ -55,12 +53,11 @@ class CoordinatesService {
             body: JSON.stringify(data)
         });
         if (!response.ok) {
-            console.error("Error while create coordinates: " + response.status + "\n With coordinates: " + data);
+            console.log("Error while create coordinates: " + response.status + "\n With coordinates: " + data.id);
             return -1;
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async getCoordinatesByID(id: number) : Promise<{coords: CoordinatesDTO | undefined, count: number}> {
@@ -72,10 +69,10 @@ class CoordinatesService {
             },
         });
         if (response.status === 404) {
-            console.error("Could not find coordinates with id: " + id);
+            console.log("Could not find coordinates with id: " + id);
             return {coords: undefined, count: 0};
         } else if (!response.ok) {
-            console.error("Error while get coordinates: " + response.status + "\n With id: " + id);
+            console.log("Error while get coordinates: " + response.status + "\n With id: " + id);
             return {coords: undefined, count: -1};
         }
 
@@ -94,15 +91,14 @@ class CoordinatesService {
             body: JSON.stringify(coords)
         });
         if (response.status === 404) {
-            console.error("Could not find coordinates with id: " + id);
+            console.log("Could not find coordinates with id: " + id);
             return 0;
         } else if (!response.ok) {
-            console.error("Error while update coordinates: " + response.status + "\n With id: " + id);
+            console.log("Error while update coordinates: " + response.status + "\n With id: " + id);
             return -1;
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async deleteCoordinates(id: number) : Promise<number> {
@@ -114,11 +110,10 @@ class CoordinatesService {
             },
         });
         if (!response.ok) {
-            console.error("Error while delete coordinates: " + response.status + "\n With id: " + id);
+            console.log("Error while delete coordinates: " + response.status + "\n With id: " + id);
             return -1;
         }
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 }
 

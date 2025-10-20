@@ -3,11 +3,10 @@ package org.example.lab1.model.postgtres;
 import lombok.Getter;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.springframework.stereotype.Component;
 
 public class HibernateFactory {
     @Getter
-    private static SessionFactory sessionFactory;
+    private static final SessionFactory sessionFactory;
 
     static {
         try {

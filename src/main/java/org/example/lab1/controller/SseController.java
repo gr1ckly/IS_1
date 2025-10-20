@@ -30,7 +30,7 @@ public class SseController {
         SseEmitter emitter = new SseEmitter(0L);
         emitter.onCompletion(() -> this.notificationService.unregisterSseEmitter(emitter));
         emitter.onTimeout(() -> this.notificationService.unregisterSseEmitter(emitter));
-        emitter.onError((e) -> this.notificationService.unregisterSseEmitter(emitter));
+        emitter.onError((Throwable e) -> this.notificationService.unregisterSseEmitter(emitter));
         notificationService.registerSseEmitter(emitter);
         log.info("SSE Emitter registered: {}", emitter);
         try {

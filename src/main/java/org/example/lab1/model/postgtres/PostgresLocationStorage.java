@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public class PostgresLocationStorage implements LocationStorage {
-    private final String alias = "loc";
+    private static final String alias = "loc";
 
     @Autowired
     private SQLQueryConstraintConverter<Location> queryConverter;
@@ -40,7 +40,7 @@ public class PostgresLocationStorage implements LocationStorage {
     public Location getLocationByID(long id) throws Exception {
         Session currSession = HibernateFactory.getSessionFactory().openSession();
         Transaction tx = currSession.beginTransaction();
-        Location location = null;
+        Location location;
         try {
             location = currSession.find(Location.class, id);
             tx.commit();
@@ -81,7 +81,7 @@ public class PostgresLocationStorage implements LocationStorage {
     public List<Location> searchLocations(int offset, int limit, FilterOption... options) throws Exception {
         Session currSession = HibernateFactory.getSessionFactory().openSession();
         Transaction tx = currSession.beginTransaction();
-        List<Location> locations = null;
+        List<Location> locations;
         try {
             StringBuilder query = new StringBuilder();
             query.append("SELECT * FROM location ");
@@ -104,11 +104,11 @@ public class PostgresLocationStorage implements LocationStorage {
     public int updateLocation(long id, Location newLocation) throws Exception {
         Session currSession = HibernateFactory.getSessionFactory().openSession();
         Transaction tx = currSession.beginTransaction();
-        int ans = 0;
+        int ans;
         try {
             if (this.getLocationByID(id) != null){
                 newLocation.setId(id);
-                Location merged = (Location) currSession.merge(newLocation);
+                currSession.merge(newLocation);
                 ans = 1;
             }else {
                 tx.rollback();
@@ -121,14 +121,14 @@ public class PostgresLocationStorage implements LocationStorage {
         } finally {
             currSession.close();
         }
-        return 1;
+        return ans;
     }
 
     @Override
     public int deleteLocation(long id) throws Exception {
         Session currSession = HibernateFactory.getSessionFactory().openSession();
         Transaction tx = currSession.beginTransaction();
-        int count = 0;
+        int count;
         try {
             StringBuilder query = new StringBuilder();
             query.append("DELETE FROM location ");

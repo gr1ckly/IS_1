@@ -1,6 +1,5 @@
 package org.example.lab1.model.postgtres;
 
-import org.example.lab1.entities.dao.Location;
 import org.example.lab1.entities.dao.Person;
 import org.example.lab1.entities.dto.FilterOption;
 import org.example.lab1.exceptions.BadDataException;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @Service
 public class PostgresPersonStorage implements PersonStorage {
-    public final String alias = "pers";
+    public static final String alias = "pers";
 
     @Autowired
     private SQLQueryConstraintConverter<Person> queryConverter;
@@ -40,7 +39,7 @@ public class PostgresPersonStorage implements PersonStorage {
     public Person getPersonByID(long id) throws Exception {
         Session currSession = HibernateFactory.getSessionFactory().openSession();
         Transaction tx = currSession.beginTransaction();
-        Person person = null;
+        Person person;
         try {
             person = currSession.find(Person.class, id);
             tx.commit();
@@ -81,7 +80,7 @@ public class PostgresPersonStorage implements PersonStorage {
     public List<Person> searchPersons(int offset, int limit, FilterOption... options) throws Exception {
         Session currSession = HibernateFactory.getSessionFactory().openSession();
         Transaction tx = currSession.beginTransaction();
-        List<Person> persons = null;
+        List<Person> persons;
         try {
             StringBuilder query = new StringBuilder();
             query.append("SELECT * FROM person ");
@@ -108,7 +107,7 @@ public class PostgresPersonStorage implements PersonStorage {
         try {
             if (this.getPersonByID(id) != null ) {
                 newPerson.setId(id);
-                Person merged = (Person) currSession.merge(newPerson);
+                currSession.merge(newPerson);
                 count = 1;
             }else {
                 tx.rollback();

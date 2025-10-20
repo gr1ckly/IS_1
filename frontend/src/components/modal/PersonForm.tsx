@@ -15,7 +15,7 @@ interface Props {
     person?: PersonDTO;
 }
 
-export default function PersonForm(props: Props) {
+export default function PersonForm(props: Readonly<Props>) {
     const dispatcher = useDispatch();
     const [currPerson, setCurrPerson] = useState<PersonDTO>(
         props.person ??
@@ -59,7 +59,7 @@ export default function PersonForm(props: Props) {
     const handleChangeLocationId = async (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value === "") {
             setCurrPerson({ ...currPerson, locationId: undefined });
-            setLocationIdMessage("Некорректное значение location_id");
+            setLocationIdMessage("");
             return;
         }
         if (Number.isNaN(Number(e.target.value))) {
@@ -78,11 +78,25 @@ export default function PersonForm(props: Props) {
     }
 
     const handleCreate = async () => {
-        if (currPerson.name === "" && coordinatesIdMessage != "" && currPerson.height <= 0) {
+        if (nameMessage !== "" || locationIdMessage !== "" || coordinatesIdMessage !== "" || eyeColorMessage !== "" || weightMessage !== "" || heightMessage !== "" || currPerson.height <= 0) {
             setMessage("Сначала введите корректные значения для всех полей");
+            return
         }
-        if (locationIdMessage === "") {
-            setCurrPerson({...currPerson, locationId: undefined})
+        if (/^-?\d+(\.\d+)?$/.test(currPerson.name.trim()) || currPerson.name === "") {
+            setMessage("Введите корректное значения для поля name");
+            return
+        }
+        if (currPerson.coordinatesId === 0) {
+            setMessage("Введите корректное значение для поля coordinates_id");
+            return
+        }
+        if (currPerson.height === 0) {
+            setMessage("Введите корректное значение для поля height");
+            return
+        }
+        if (currPerson.birthday === "") {
+            setMessage("Введите корректное значения для поля birthday");
+            return
         }
         const number = await PersonService.createPerson(currPerson);
         if (number < 1) {
@@ -93,20 +107,37 @@ export default function PersonForm(props: Props) {
     }
 
     const handleUpdate = async () => {
-        if (currPerson.name === "" && currPerson.coordinatesId <= 0 && currPerson.height <= 0) {
+        if (nameMessage !== "" || locationIdMessage !== "" || coordinatesIdMessage !== "" || eyeColorMessage !== "" || weightMessage !== "" || heightMessage !== "" || currPerson.height <= 0) {
             setMessage("Сначала введите корректные значения для всех полей");
+            return
+        }
+        if (/^-?\d+(\.\d+)?$/.test(currPerson.name.trim()) || currPerson.name === "") {
+            setMessage("Введите корректное значения для поля name");
+            return
+        }
+        if (currPerson.coordinatesId === 0) {
+            setMessage("Введите корректное значение для поля coordinates_id");
+            return
+        }
+        if (currPerson.height === 0) {
+            setMessage("Введите корректное значение для поля height");
+            return
+        }
+        if (currPerson.birthday === "") {
+            setMessage("Введите корректное значения для поля birthday");
+            return
         }
         const number = await PersonService.updatePerson(currPerson.id ? currPerson.id : 0, currPerson);
         if (number < 1) {
             setMessage(`Ошибка при обновлении Person с id = ${currPerson.id}`);
             return
         }
-        setMessage(`Обновлен Person с id = ${number}`)
+        setMessage(`Обновлен Person с id = ${currPerson.id}`)
     }
 
     return (
         <div className={styles.container}>
-            <label className={styles.label}>Person</label>
+            <span className={styles.label}>Person</span>
             <button
                 className={styles.closeButton}
                 onClick={() => dispatcher({ type: CLEAR_ALL })}
@@ -121,22 +152,28 @@ export default function PersonForm(props: Props) {
             )}
 
             <div className={styles.field}>
-                <label className={styles.label}>name:</label>
+                <span className={styles.label}>name:</span>
                 <input
                     type="text"
                     className={styles.input}
                     value={currPerson.name ?? ""}
                     onChange={(e) => {
                         const value = e.target.value;
+                        if (value === "") {
+                            setNameMessage("Поле name не должно быть пустым");
+                        } else if (/^-?\d+(\.\d+)?$/.test(value.trim())) {
+                            setNameMessage("Поле name не должно быть числом");
+                        } else {
+                            setNameMessage("");
+                        }
                         setCurrPerson({ ...currPerson, name: value });
-                        setNameMessage(value ? "" : "Поле name не должно быть пустым");
                     }}
                 />
                 {nameMessage && <label className={styles.message}>{nameMessage}</label>}
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>coordinates_id:</label>
+                <span className={styles.label}>coordinates_id:</span>
                 <input
                     type="number"
                     step="1"
@@ -150,7 +187,7 @@ export default function PersonForm(props: Props) {
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>eyeColor (необязательно):</label>
+                <span className={styles.label}>eyeColor (необязательно):</span>
                 <select
                     className={styles.select}
                     value={currPerson.eyeColor ?? ""}
@@ -175,7 +212,7 @@ export default function PersonForm(props: Props) {
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>hairColor:</label>
+                <span className={styles.label}>hairColor:</span>
                 <select
                     className={styles.select}
                     value={currPerson.hairColor ?? ""}
@@ -192,7 +229,7 @@ export default function PersonForm(props: Props) {
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>location_id (необязательно):</label>
+                <span className={styles.label}>location_id (необязательно):</span>
                 <input
                     type="number"
                     step="1"
@@ -206,15 +243,15 @@ export default function PersonForm(props: Props) {
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>height:</label>
+                <span className={styles.label}>height:</span>
                 <input
                     type="number"
                     step="any"
                     className={styles.input}
                     value={currPerson.height ?? ""}
                     onChange={(e) => {
-                        const value = parseFloat(e.target.value);
-                        setCurrPerson({ ...currPerson, height: value > 0 ? value : 0 });
+                        const value = Number.parseFloat(e.target.value);
+                        setCurrPerson({ ...currPerson, height: Math.max(value, 0) });
                         setHeightMessage(value > 0 ? "" : "Поле height должно быть больше 0");
                     }}
                 />
@@ -224,7 +261,7 @@ export default function PersonForm(props: Props) {
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>birthday:</label>
+                <span className={styles.label}>birthday:</span>
                 <input
                     type="date"
                     className={styles.input}
@@ -248,15 +285,15 @@ export default function PersonForm(props: Props) {
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>weight (необязательно):</label>
+                <span className={styles.label}>weight (необязательно):</span>
                 <input
                     type="number"
                     step="any"
                     className={styles.input}
                     value={currPerson.weight ?? ""}
                     onChange={(e) => {
-                        const value = parseFloat(e.target.value);
-                        setCurrPerson({ ...currPerson, weight: value > 0 ? value : 0 });
+                        const value = Number.parseFloat(e.target.value);
+                        setCurrPerson({ ...currPerson, weight: Math.max(value, 0) });
                         setWeightMessage(value > 0 ? "" : "Поле weight должно быть больше 0");
                     }}
                 />
@@ -266,7 +303,7 @@ export default function PersonForm(props: Props) {
             </div>
 
             <div className={styles.field}>
-                <label className={styles.label}>nationality:</label>
+                <span className={styles.label}>nationality:</span>
                 <select
                     className={styles.select}
                     value={currPerson.nationality ?? ""}

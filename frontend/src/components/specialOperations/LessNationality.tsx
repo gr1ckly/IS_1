@@ -6,18 +6,18 @@ import PersonService from "../../services/PersonService";
 import styles from "../../styles/LessNationality.module.css"
 
 export default function LessNationality() {
-    var [selectedNationality, setSelectedNationality] = useState<Country | undefined>(undefined);
-    var [message, setMessage] = useState("");
+    const [selectedNationality, setSelectedNationality] = useState<Country | undefined>(undefined);
+    const [message, setMessage] = useState("");
 
     const handleCount = async () => {
-        if (!selectedNationality) {
+        if (selectedNationality === undefined) {
             setMessage("Пожалуйста, выберите nationality");
             return
         }
         else console.log("Считаем всех с nationality <", selectedNationality)
         const currFilter: FilterOption = {fieldName: "nationality", operationType: OperationType.LESS, value: Country[selectedNationality].toString()};
         console.log(currFilter.value);
-        var selectNumber: number = await PersonService.getCount(currFilter);
+        const selectNumber: number = await PersonService.getCount(currFilter);
         if (!selectNumber || selectNumber === -1) {
             setMessage(`Ошибка при подсчете объектов с nationality < ${selectedNationality.toString()} `);
         } else {
@@ -28,8 +28,8 @@ export default function LessNationality() {
 
     return (
         <div className={styles.container}>
-            <label className={styles.label}>Посчитать людей с национальностью меньше, чем заданная</label>
-            <label className={styles.label}>Выберите национальность:</label>
+            <span className={styles.label}>Посчитать людей с национальностью меньше, чем заданная</span>
+            <span className={styles.label}>Выберите национальность:</span>
             <select
                 id="nationality"
                 className={styles.select}

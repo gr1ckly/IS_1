@@ -6,16 +6,16 @@ import Color from "../../dtos/ColorEnum";
 import styles from "../../styles/EyesColor.module.css";
 
 export default function EyesColor() {
-    var [selectedColor, setSelectedColor] = useState<Color | undefined>(undefined);
-    var [message, setMessage] = useState("");
+    const [selectedColor, setSelectedColor] = useState<Color | undefined>(undefined);
+    const [message, setMessage] = useState("");
 
     const handleCount = async () => {
-        if (!selectedColor) {
+        if (selectedColor === undefined) {
           setMessage("Пожалуйста, выберите color");
           return
         }
         else console.log("Считаем % всех с eyesColor = ", selectedColor)
-        var allPeopleNumber: number = await PersonService.getCount();
+        const allPeopleNumber: number = await PersonService.getCount();
         if (allPeopleNumber === -1) {
             setMessage(`Ошибка при подсчете % с eyesColor = ${selectedColor.toString()} `);
             return
@@ -25,7 +25,7 @@ export default function EyesColor() {
         }
         const currFilter: FilterOption = {fieldName: "eye_color", operationType: OperationType.EQUAL, value: Color[selectedColor].toString()};
         console.log(currFilter.value);
-        var selectNumber: number = await PersonService.getCount(currFilter);
+        const selectNumber: number = await PersonService.getCount(currFilter);
         console.log(selectNumber);
         if (selectNumber === -1) {
             setMessage(`Ошибка при подсчете % с eyesColor = ${selectedColor.toString()} `);
@@ -37,8 +37,8 @@ export default function EyesColor() {
 
     return (
         <div className={styles.container}>
-            <label className={styles.label}>Посчитать % людей с определенным цветом глаз</label>
-            <label className={styles.label}>Выберите цвет глаз:</label>
+            <span className={styles.label}>Посчитать % людей с определенным цветом глаз</span>
+            <span className={styles.label}>Выберите цвет глаз:</span>
             <select
                 id="color"
                 className={styles.select}

@@ -2,11 +2,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import FilterOption from "../../dtos/FilterOption";
 import OperationType from "../../dtos/OperationType";
-import {COPY_STATE, SET_CREATE_LOCATION, SET_UPDATE_LOCATION} from "../../consts/StateConsts";
+import {COPY_STATE, SET_CREATE_LOCATION, SET_NOTIFICATIONS, SET_UPDATE_LOCATION} from "../../consts/StateConsts";
 import LocationDTO from "../../dtos/LocationDTO";
 import TableState from "../../storage/states/TableState";
 import LocationService from "../../services/LocationService";
 import styles from "../../styles/LocationComponent.module.css";
+import {selectNotifications} from "../../storage/StateSelectors";
 
 
 interface FilterProps {
@@ -23,33 +24,52 @@ interface SortProps {
 export default function LocationComponent () {
     const dispatcher = useDispatch();
     const [locations, setLocations] = useState<LocationDTO[]>([]);
+    const notifications = useSelector(selectNotifications) ?? [];
 
-    var [tableState, setTableState] = useState<TableState>({pageSize: 5, currPage: 1, count: 0});
-    var [filterState, setFilterState] = useState<FilterProps>({});
-    var [sortState, setSortState] = useState<SortProps>({});
-    var [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+    const [tableState, setTableState] = useState<TableState>({pageSize: 5, currPage: 1, count: 0});
+    const [filterState, setFilterState] = useState<FilterProps>({});
+    const [sortState, setSortState] = useState<SortProps>({});
+    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
     const currState = useSelector(state => state);
 
     const applyFilters = () => {
-        var newFilters: FilterOption[] =[];
+        const newFilters: FilterOption[] =[];
         if (filterState.name) {
             newFilters.push({fieldName: "name", operationType: OperationType.EQUAL, value: filterState.name});
         }
-        if (sortState.id != undefined) {
+        if (sortState.id !== undefined) {
             newFilters.push({fieldName: "id", operationType: sortState.id ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.x != undefined) {
+        if (sortState.x !== undefined) {
             newFilters.push({fieldName: "x", operationType: sortState.x ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.y != undefined) {
+        if (sortState.y !== undefined) {
             newFilters.push({fieldName: "y", operationType: sortState.y ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
         setTableState({...tableState, filters: newFilters});
     }
 
+    const updateLocations = async () => {
+        var currFilters: FilterOption[];
+        if (!tableState.filters || tableState.filters.length < 1) {
+            currFilters = [];
+        } else {
+            currFilters = tableState.filters;
+        }
+        const newCount: number = await LocationService.getCount(...currFilters);
+        if (newCount !== tableState.count) {
+            if (newCount <= (tableState.currPage - 1) * tableState.pageSize) {
+                setTableState({...tableState, currPage: Math.trunc(((newCount - 1) / tableState.pageSize) + 1)});
+            }
+            setTableState({...tableState, count: newCount});
+        }
+        const newLocations = await LocationService.searchLocations(Math.trunc((tableState.currPage - 1) * tableState.pageSize), tableState.pageSize, ...currFilters);
+        setLocations(newLocations);
+    }
+
     useEffect(() => {
         updateLocations();
-    }, [tableState, currState]);
+    }, [tableState, currState, updateLocations]);
 
     const handleNext = async () => {
         if (tableState) {
@@ -62,26 +82,6 @@ export default function LocationComponent () {
             setTableState({...tableState, currPage: tableState.currPage - 1});
         }
     }
-
-    const updateLocations = async () => {
-        var currFilters: FilterOption[];
-        if (!tableState.filters || tableState.filters.length < 1) {
-            currFilters = [];
-        } else {
-            currFilters = tableState.filters;
-        }
-        const newCount: number = await LocationService.getCount(...currFilters);
-        if (newCount != tableState.count) {
-            if (newCount <= (tableState.currPage - 1) * tableState.pageSize) {
-                tableState.currPage = Math.trunc(((newCount - 1) / tableState.pageSize) + 1);
-            }
-            tableState.count = newCount;
-            setTableState(tableState);
-        }
-        const newLocations = await LocationService.searchLocations(Math.trunc((tableState.currPage - 1) * tableState.pageSize), tableState.pageSize, ...currFilters);
-        setLocations(newLocations);
-    }
-
 
     return (
             <div className={styles.LocationComponent}>
@@ -103,7 +103,7 @@ export default function LocationComponent () {
                 {isFilterOpen && (
                     <div className={styles.filters}>
                         <div className={styles.field}>
-                            <label className={styles.label}>id</label>
+                            <span className={styles.label}>id</span>
                             <select
                                 className={styles.select}
                                 onChange={(e) => {
@@ -121,21 +121,21 @@ export default function LocationComponent () {
                         </div>
 
                         <div className={styles.field}>
-                            <label className={styles.label}>name</label>
+                            <span className={styles.label}>name</span>
                             <input
                                 className={styles.input}
                                 type="text"
                                 onChange={(e) =>
                                     setFilterState({
                                         ...filterState,
-                                        name: e.target.value === "" ? undefined : e.target.value,
+                                        name: e.target.value === "" || /^-?\d+(\.\d+)?$/.test(e.target.value.trim()) ? undefined : e.target.value,
                                     })
                                 }
                             />
                         </div>
 
                         <div className={styles.field}>
-                            <label className={styles.label}>x:</label>
+                            <span className={styles.label}>x:</span>
                             <select
                                 className={styles.select}
                                 onChange={(e) => {
@@ -153,7 +153,7 @@ export default function LocationComponent () {
                         </div>
 
                         <div className={styles.field}>
-                            <label className={styles.label}>y:</label>
+                            <span className={styles.label}>y:</span>
                             <select
                                 className={styles.select}
                                 onChange={(e) => {
@@ -198,10 +198,14 @@ export default function LocationComponent () {
                                 <td>
                                     <button
                                         className={styles.deleteButton}
-                                        onClick={() => {
+                                        onClick={async () => {
                                             if (location.id){
-                                                LocationService.deleteLocation(location.id);
-                                                dispatcher({type: COPY_STATE});
+                                                const number = await LocationService.deleteLocation(location.id);
+                                                if (number === -1) {
+                                                    dispatcher({type: SET_NOTIFICATIONS, payload: [...notifications, "Ошибка при удалении Location. Попробуйте сначала убрать все зависимости, а потом попробовать снова."]});
+                                                } else {
+                                                    dispatcher({type: COPY_STATE});
+                                                }
                                         }}}>
                                         Удалить
                                     </button>

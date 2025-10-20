@@ -7,9 +7,9 @@ import TableState from "../../storage/states/TableState";
 import styles from "../../styles/LessBirthday.module.css"
 
 export default function LessBirthday() {
-    var [tableState, setTableState] = useState<TableState | undefined>(undefined);
-    var [birthday, setBirthday] = useState<string>("");
-    var [message, setMessage] = useState("");
+    const [tableState, setTableState] = useState<TableState | undefined>(undefined);
+    const [birthday, setBirthday] = useState<string>("");
+    const [message, setMessage] = useState("");
 
     const handleGet = async () => {
         if (birthday === "") {
@@ -18,7 +18,7 @@ export default function LessBirthday() {
         }
         else console.log("Выводим всех с birthday <", birthday);
         const currFilter: FilterOption = {fieldName: "birthday", operationType: OperationType.LESS, value: birthday};
-        var personNumber: number = await PersonService.getCount(currFilter);
+        const personNumber: number = await PersonService.getCount(currFilter);
         if (!personNumber || personNumber === -1) {
             setMessage(`Ошибка при выводе объектов с birthday < ${birthday} `);
             setBirthday("");
@@ -28,16 +28,15 @@ export default function LessBirthday() {
             setBirthday("");
             return
         }
-        if (!tableState) {
-            tableState = {pageSize: 10, count:personNumber, currPage:1, filters: [currFilter]};
+        if (tableState === undefined) {
+            setTableState({pageSize: 10, count:personNumber, currPage:1, filters: [currFilter]});
         }
-        setTableState(tableState);
     }
 
     return (
         <div className={styles.container}>
-            <label className={styles.label}>Вывести людей, день рождения которых позже заданного</label>
-            <label className={styles.label}>Введите день рождения:</label>
+            <span className={styles.label}>Вывести людей, день рождения которых позже заданного</span>
+            <span className={styles.label}>Введите день рождения:</span>
             <input
                 type="date"
                 className={styles.input}

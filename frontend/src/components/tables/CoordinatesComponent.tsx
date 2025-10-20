@@ -5,12 +5,13 @@ import FilterOption from "../../dtos/FilterOption";
 import OperationType from "../../dtos/OperationType";
 import {
     COPY_STATE,
-    SET_CREATE_COORDINATES,
+    SET_CREATE_COORDINATES, SET_NOTIFICATIONS,
     SET_UPDATE_COORDINATES,
 } from "../../consts/StateConsts";
 import CoordinatesDTO from "../../dtos/CoordinatesDTO";
 import CoordinatesService from "../../services/CoordinatesService";
 import styles from "../../styles/CoordinatesComponent.module.css"
+import {selectNotifications} from "../../storage/StateSelectors";
 
 interface SortProps {
     id?: boolean,
@@ -21,29 +22,48 @@ interface SortProps {
 export default function CoordinatesComponent() {
     const dispatcher = useDispatch();
     const [coordinates, setCoordinates] = useState<CoordinatesDTO[]>([]);
+    const notifications = useSelector(selectNotifications) ?? [];
 
-    var [tableState, setTableState] = useState<TableState>({pageSize: 5, currPage: 1, count: 0});
-    var [sortState, setSortState] = useState<SortProps>({});
-    var [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+    const [tableState, setTableState] = useState<TableState>({pageSize: 5, currPage: 1, count: 0});
+    const [sortState, setSortState] = useState<SortProps>({});
+    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
     const currState = useSelector(state => state);
 
     const applyFilters = () => {
-        var newFilters: FilterOption[] =[];
-        if (sortState.id != undefined) {
+        const newFilters: FilterOption[] =[];
+        if (sortState.id !== undefined) {
             newFilters.push({fieldName: "id", operationType: sortState.id ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.x != undefined) {
+        if (sortState.x !== undefined) {
             newFilters.push({fieldName: "x", operationType: sortState.x ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
-        if (sortState.y != undefined) {
+        if (sortState.y !== undefined) {
             newFilters.push({fieldName: "y", operationType: sortState.y ? OperationType.SORTED : OperationType.SORTED_DESC});
         }
         setTableState({...tableState, filters: newFilters});
     }
 
+    const updateCoordinates = async () => {
+        var currFilters: FilterOption[];
+        if (!tableState.filters || tableState.filters.length < 1) {
+            currFilters = [];
+        } else {
+            currFilters = tableState.filters;
+        }
+        const newCount: number = await CoordinatesService.getCount(...currFilters);
+        if (newCount !== tableState.count) {
+            if (newCount <= (tableState.currPage - 1) * tableState.pageSize) {
+                setTableState({...tableState, currPage: Math.trunc(((newCount - 1) / tableState.pageSize) + 1)});
+            }
+            setTableState({...tableState, count: newCount});
+        }
+        const newCoordinates = await CoordinatesService.searchCoordinates(Math.trunc((tableState.currPage - 1) * tableState.pageSize), tableState.pageSize, ...currFilters);
+        setCoordinates(newCoordinates);
+    }
+
     useEffect(() => {
         updateCoordinates();
-    }, [tableState, currState]);
+    }, [tableState, currState, updateCoordinates]);
 
     const handleNext = async () => {
         if (tableState) {
@@ -56,26 +76,6 @@ export default function CoordinatesComponent() {
             setTableState({...tableState, currPage: tableState.currPage - 1});
         }
     }
-
-    const updateCoordinates = async () => {
-        var currFilters: FilterOption[];
-        if (!tableState.filters || tableState.filters.length < 1) {
-            currFilters = [];
-        } else {
-            currFilters = tableState.filters;
-        }
-        const newCount: number = await CoordinatesService.getCount(...currFilters);
-        if (newCount != tableState.count) {
-            if (newCount <= (tableState.currPage - 1) * tableState.pageSize) {
-                tableState.currPage = Math.trunc(((newCount - 1) / tableState.pageSize) + 1);
-            }
-            tableState.count = newCount;
-            setTableState(tableState);
-        }
-        const newCoordinates = await CoordinatesService.searchCoordinates(Math.trunc((tableState.currPage - 1) * tableState.pageSize), tableState.pageSize, ...currFilters);
-        setCoordinates(newCoordinates);
-    }
-
 
     return (
         <div className={styles.ContainerComponent}>
@@ -90,7 +90,7 @@ export default function CoordinatesComponent() {
             {isFilterOpen && (
                 <div className={styles.filters}>
                     <div className={styles.field}>
-                        <label className={styles.label}>id:</label>
+                        <span className={styles.label}>id:</span>
                         <select className={styles.select} onChange={(e) => {
                             if (e.target.value === "") {
                                 setSortState({...sortState, id: undefined});
@@ -106,7 +106,7 @@ export default function CoordinatesComponent() {
                         </select>
                     </div>
                     <div className={styles.field}>
-                        <label className={styles.label}>x:</label>
+                        <span className={styles.label}>x:</span>
                         <select className={styles.select} onChange={(e) => {
                             if (e.target.value === "") {
                                 setSortState({...sortState, x: undefined});
@@ -122,7 +122,7 @@ export default function CoordinatesComponent() {
                         </select>
                     </div>
                     <div className={styles.field}>
-                        <label className={styles.label}>y:</label>
+                        <span className={styles.label}>y:</span>
                         <select className={styles.select} onChange={(e) => {
                             if (e.target.value === "") {
                                 setSortState({...sortState, y: undefined});
@@ -160,10 +160,14 @@ export default function CoordinatesComponent() {
                             <td>{coord.x}</td>
                             <td>{coord.y}</td>
                             <td>
-                                <button className={styles.deleteButton} onClick={() => {
+                                <button className={styles.deleteButton} onClick={async () => {
                                     if (coord.id) {
-                                        CoordinatesService.deleteCoordinates(coord.id);
-                                        dispatcher({type: COPY_STATE});
+                                        const number = await CoordinatesService.deleteCoordinates(coord.id);
+                                        if (number === -1) {
+                                            dispatcher({type: SET_NOTIFICATIONS, payload: [...notifications, "Ошибка при удалении Coordinates. Попробуйте сначала убрать все зависимости, а потом попробовать снова."]});
+                                        } else {
+                                            dispatcher({type: COPY_STATE});
+                                        }
                                     }
                                 }}>
                                     Удалить

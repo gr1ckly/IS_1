@@ -26,3 +26,7 @@ export const selectCreateLocation = (state: AppState): boolean | undefined => {
 export const selectCreateCoordinates = (state: AppState): boolean | undefined => {
     return state.createCoordinates;
 };
+
+export const selectNotifications = (state: AppState): string[] => {
+    return state.notifications;
+}

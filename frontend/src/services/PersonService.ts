@@ -1,6 +1,5 @@
 import FilterOption from "../dtos/FilterOption";
-import {BASE_URL, LOCATION_PATH, PERSON_PATH} from "../consts/HttpConsts";
-import LocationDTO from "../dtos/LocationDTO";
+import {BASE_URL, PERSON_PATH} from "../consts/HttpConsts";
 import PersonDTO from "../dtos/PersonDTO";
 
 class PersonService {
@@ -19,8 +18,7 @@ class PersonService {
             return -1;
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async searchPersons(offset: number, limit: number, ...options: FilterOption[]) : Promise<PersonDTO[]> {
@@ -41,8 +39,7 @@ class PersonService {
             return [];
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async createPerson(data: PersonDTO) : Promise<number> {
@@ -60,8 +57,7 @@ class PersonService {
             return -1;
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async getPersonByID(id: number) : Promise<{coords: PersonDTO | null, count: number}> {
@@ -102,8 +98,7 @@ class PersonService {
             return -1;
         }
 
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 
     public static async deletePerson(...options: FilterOption[]) : Promise<number> {
@@ -120,8 +115,7 @@ class PersonService {
             console.error("Error while delete persons: " + response.status + "\n With filters: " + options);
             return -1;
         }
-        const respJson = await response.json();
-        return respJson;
+        return await response.json();
     }
 }
 

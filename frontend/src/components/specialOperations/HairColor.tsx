@@ -8,10 +8,10 @@ import LocationDTO from "../../dtos/LocationDTO";
 import styles from "../../styles/HairColor.module.css";
 
 export default function HairColor() {
-    var [selectedColor, setSelectedColor] = useState<Color | undefined>(undefined);
-    var [selectedLocationId, setSelectedLocationId] = useState<number | undefined>(undefined);
-    var [message, setMessage] = useState("");
-    var [locationIdMessage, setLocationIdMessage] = useState("");
+    const [selectedColor, setSelectedColor] = useState<Color | undefined>(undefined);
+    const [selectedLocationId, setSelectedLocationId] = useState<number | undefined>(undefined);
+    const [message, setMessage] = useState("");
+    const [locationIdMessage, setLocationIdMessage] = useState("");
 
     const handleCount = async () => {
         if (!selectedColor) {
@@ -25,7 +25,7 @@ export default function HairColor() {
         console.log("Считаем всех с hairColor = ", selectedColor)
         const hairFilter: FilterOption = {fieldName: "hair_color", operationType: OperationType.EQUAL, value: Color[selectedColor].toString()};
         const locationFilter: FilterOption = {fieldName: "location_id", operationType: OperationType.EQUAL, value: selectedLocationId.toString()}
-        var selectNumber: number = await PersonService.getCount(hairFilter, locationFilter);
+        const selectNumber: number = await PersonService.getCount(hairFilter, locationFilter);
         if (selectNumber === -1) {
             setMessage(`Ошибка при подсчете людей с hairColor = ${selectedColor.toString()} в локации с location_id = ${selectedLocationId.toString()}`);
         } else {
@@ -36,8 +36,8 @@ export default function HairColor() {
     }
 
     const handleChangeLocationId = async (e: ChangeEvent<HTMLInputElement>) => {
-        var currLocationId: number = Number.parseInt(e.target.value);
-        var currLocation: { coords: LocationDTO | undefined; count: number } = await LocationService.getLocationByID(currLocationId);
+        const currLocationId: number = Number.parseInt(e.target.value);
+        const currLocation: { coords: LocationDTO | undefined; count: number } = await LocationService.getLocationByID(currLocationId);
         if (currLocation.count < 1) {
             setLocationIdMessage(`Location с id = ${currLocationId} не существует`)
             setSelectedLocationId(undefined);
@@ -49,8 +49,8 @@ export default function HairColor() {
 
     return (
         <div className={styles.container}>
-            <label className={styles.label}>Посчитать количество людей с определенным цветом глаз в пределах заданной локации</label>
-            <label className={styles.label}>Выберите цвет глаз:</label>
+            <span className={styles.label}>Посчитать количество людей с определенным цветом глаз в пределах заданной локации</span>
+            <span className={styles.label}>Выберите цвет глаз:</span>
             <select
                 id="color"
                 className={styles.select}
@@ -69,7 +69,7 @@ export default function HairColor() {
             </select>
 
             <div className={styles.inputGroup}>
-                <label className={styles.label}>Введите location_id:</label>
+                <span className={styles.label}>Введите location_id:</span>
                 <input
                     type="number"
                     className={styles.input}

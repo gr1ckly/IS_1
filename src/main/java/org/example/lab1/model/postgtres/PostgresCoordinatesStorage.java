@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public class PostgresCoordinatesStorage implements CoordinatesStorage {
-    private final String alias = "coords";
+    private static final String alias = "coords";
 
     @Autowired
     private SQLQueryConstraintConverter<Coordinates> queryConverter;
@@ -106,11 +106,11 @@ public class PostgresCoordinatesStorage implements CoordinatesStorage {
     public int updateCoordinates(long id, Coordinates newCoords) throws Exception {
         Session currSession = HibernateFactory.getSessionFactory().openSession();
         Transaction tx = currSession.beginTransaction();
-        int count = 0;
+        int count;
         try {
             if (this.getCoordinatesByID(id) != null) {
                 newCoords.setId(id);
-                Coordinates merged = (Coordinates) currSession.merge(newCoords);
+                currSession.merge(newCoords);
                 count = 1;
             } else {
                 tx.rollback();
@@ -130,7 +130,7 @@ public class PostgresCoordinatesStorage implements CoordinatesStorage {
     public int deleteCoordinates(long id) throws Exception {
         Session currSession = HibernateFactory.getSessionFactory().openSession();
         Transaction tx = currSession.beginTransaction();
-        int count = 0;
+        int count;
         try {
             StringBuilder query = new StringBuilder();
             query.append("DELETE FROM coordinates ");
